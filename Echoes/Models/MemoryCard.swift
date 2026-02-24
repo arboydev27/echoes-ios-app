@@ -36,12 +36,12 @@ final class MemoryCard {
     @Transient
     var categoryColorHex: String {
         switch category.lowercased() {
-        case "childhood": return "#F2D3CD" // Rose
-        case "romance": return "#DCD6F7"   // Lilac
-        case "travel": return "#D3E5EF"    // Blue-Sky
-        case "family": return "#D4E0D9"    // Sage
-        case "home": return "#FEF3C7"      // Maize
-        default: return "#B8E6D6"          // Mint
+        case "childhood": return "#FFB067" // Tangerine
+        case "romance": return "#FF9CEE"   // Bubblegum
+        case "travel": return "#90E0EF"    // Turquoise
+        case "family": return "#D4ED6D"    // Lime
+        case "home": return "#f4e06d"      // Mustard
+        default: return "#b8e6d6"          // Mint
         }
     }
 }

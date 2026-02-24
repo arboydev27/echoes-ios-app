@@ -31,13 +31,19 @@ extension Color {
     static let neoPrimary = Color(hex: "#FF8A70")     // Coral primary
     
     // Category Colors
-    static let neoMint = Color(hex: "#B8E6D6")
-    static let neoLilac = Color(hex: "#DCD6F7")
-    static let neoMustard = Color(hex: "#FFD166")
+    static let neoMint = Color(hex: "#b8e6d6")
+    static let neoLilac = Color(hex: "#dcd6f7")
+    static let neoMustard = Color(hex: "#f4e06d")
     static let neoRose = Color(hex: "#F2D3CD")
     static let neoBlueSky = Color(hex: "#D3E5EF")
     static let neoSage = Color(hex: "#D4E0D9")
     static let neoMaize = Color(hex: "#FEF3C7")
+    
+    // Extra Bold Colors
+    static let neoTangerine = Color(hex: "#FFB067")  // Vibrant Orange
+    static let neoBubblegum = Color(hex: "#FF9CEE")  // Hot Pink
+    static let neoTurquoise = Color(hex: "#90E0EF")  // Bright Cyan
+    static let neoLime = Color(hex: "#D4ED6D")       // Electric Yellow-Green
 }
 
 extension View {
