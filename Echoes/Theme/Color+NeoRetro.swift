@@ -28,6 +28,7 @@ extension Color {
     // Base Colors
     static let neoBackground = Color(hex: "#FDF8F2") // Warm cream
     static let neoCharcoal = Color(hex: "#1A1A1A")   // Deep charcoal
+    static let neoInk = Color(hex: "#1D0F0C")        // Warm dark brown/black
     static let neoPrimary = Color(hex: "#FF8A70")     // Coral primary
     
     // Category Colors

@@ -58,7 +58,8 @@ struct SparkView: View {
                     RoundedRectangle(cornerRadius: 32)
                         .fill(Color(hex: prompts.count > 2 ? prompts[2].colorHex : "#b8e6d6"))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 32).stroke(Color.neoCharcoal, lineWidth: 2)
+                            RoundedRectangle(cornerRadius: 32)
+                                .stroke(Color.neoCharcoal, lineWidth: 2)
                         )
                         .frame(maxWidth: .infinity)
                         .aspectRatio(4/5, contentMode: .fit)
@@ -72,7 +73,8 @@ struct SparkView: View {
                     RoundedRectangle(cornerRadius: 32)
                         .fill(Color(hex: prompts.count > 1 ? prompts[1].colorHex : "#dcd6f7"))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 32).stroke(Color.neoCharcoal, lineWidth: 2)
+                            RoundedRectangle(cornerRadius: 32)
+                                .stroke(Color.neoCharcoal, lineWidth: 2)
                         )
                         .frame(maxWidth: .infinity)
                         .aspectRatio(4/5, contentMode: .fit)
@@ -138,13 +140,25 @@ struct SparkView: View {
                         showCapture = true
                     }
                 }) {
-                    HStack {
-                        Image(systemName: "mic.fill")
+                    HStack(spacing: 12) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.neoPrimary)
+                                .frame(width: 40, height: 40)
+                            
+                            Image(systemName: "mic.fill")
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundColor(.neoInk)
+                        }
+                        
                         Text("Start Interview")
+                            .font(.system(size: 20, weight: .bold))
+                            .tracking(1)
                     }
                     .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
                 }
-                .buttonStyle(NeoRetroButtonStyle(backgroundColor: .neoCharcoal, foregroundColor: .white, cornerRadius: 16))
+                .buttonStyle(NeoRetroButtonStyle(backgroundColor: .neoInk, foregroundColor: .white, cornerRadius: 40, borderWidth: 0, isPaddingEnabled: false))
                 .padding(.horizontal, 24)
                 .padding(.bottom, 120) // Account for TabBar padding
                 .disabled(prompts.isEmpty)

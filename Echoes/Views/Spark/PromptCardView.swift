@@ -97,7 +97,11 @@ struct PromptCardView: View {
             RoundedRectangle(cornerRadius: 32)
                 .stroke(Color.neoCharcoal, lineWidth: 2)
         )
-        .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
+        .background(
+            RoundedRectangle(cornerRadius: 32)
+                .fill(Color.neoCharcoal)
+                .offset(x: 4, y: 4)
+        )
         .aspectRatio(4/5, contentMode: .fit)
     }
 }
