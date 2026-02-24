@@ -6,6 +6,7 @@ struct VaultView: View {
     @Query(sort: \MemoryCard.date, order: .reverse) private var memories: [MemoryCard]
     @State private var searchText = ""
     @State private var selectedFilter: String? = nil
+    @State private var showSettings = false
     
     let filters = ["Childhood", "Romance", "Travel", "Family", "Home"]
     
@@ -30,7 +31,7 @@ struct VaultView: View {
                 VStack(spacing: 0) {
                     // Header
                     HStack {
-                        Button(action: {}) {
+                        Button(action: { showSettings = true }) {
                             Image(systemName: "line.3.horizontal")
                                 .font(.title3)
                                 .foregroundColor(.neoCharcoal)
@@ -111,6 +112,9 @@ struct VaultView: View {
                     }
                 }
             }
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
         }
     }
         

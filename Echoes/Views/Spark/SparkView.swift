@@ -7,6 +7,7 @@ struct SparkView: View {
     // For navigating to CaptureView with a specific prompt
     @State private var showCapture = false
     @State private var selectedPrompt: Prompt?
+    @State private var showSettings = false
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -15,7 +16,7 @@ struct SparkView: View {
             VStack(spacing: 0) {
                 // Header
                 HStack {
-                    Button(action: {}) {
+                    Button(action: { showSettings = true }) {
                         Image(systemName: "line.3.horizontal")
                             .font(.title3)
                             .foregroundColor(.neoCharcoal)
@@ -148,6 +149,9 @@ struct SparkView: View {
         }
         .fullScreenCover(isPresented: $showCapture) {
             CaptureView(prompt: selectedPrompt)
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
         }
     }
     
