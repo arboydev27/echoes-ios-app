@@ -55,30 +55,30 @@ struct SparkView: View {
                 // Card Stack
                 ZStack {
                     // Background Card 1
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.neoMustard)
+                    RoundedRectangle(cornerRadius: 32)
+                        .fill(Color(hex: prompts.count > 2 ? prompts[2].colorHex : "#b8e6d6"))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 16).stroke(Color.neoCharcoal, lineWidth: 2)
+                            RoundedRectangle(cornerRadius: 32).stroke(Color.neoCharcoal, lineWidth: 2)
                         )
                         .frame(maxWidth: .infinity)
                         .aspectRatio(4/5, contentMode: .fit)
-                        .rotationEffect(.degrees(6))
-                        .offset(y: 20)
-                        .padding(.horizontal, 40)
+                        .rotationEffect(.degrees(10))
+                        .offset(x: 15, y: 30)
+                        .padding(.horizontal, 35)
                         .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
                         .opacity(prompts.count > 2 ? 1 : 0)
                     
                     // Background Card 2
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.neoLilac)
+                    RoundedRectangle(cornerRadius: 32)
+                        .fill(Color(hex: prompts.count > 1 ? prompts[1].colorHex : "#dcd6f7"))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 16).stroke(Color.neoCharcoal, lineWidth: 2)
+                            RoundedRectangle(cornerRadius: 32).stroke(Color.neoCharcoal, lineWidth: 2)
                         )
                         .frame(maxWidth: .infinity)
                         .aspectRatio(4/5, contentMode: .fit)
-                        .rotationEffect(.degrees(-3))
-                        .offset(y: 10)
-                        .padding(.horizontal, 30)
+                        .rotationEffect(.degrees(-6))
+                        .offset(x: -10, y: 15)
+                        .padding(.horizontal, 20)
                         .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
                         .opacity(prompts.count > 1 ? 1 : 0)
                     
@@ -126,6 +126,7 @@ struct SparkView: View {
                         }
                     }
                 }
+                .frame(maxWidth: 380, maxHeight: 520)
                 .padding(.bottom, 20)
                 
                 Spacer()
@@ -158,7 +159,22 @@ struct SparkView: View {
     private func swipedCard() {
         guard !prompts.isEmpty else { return }
         // Move top card back to end (or drop it)
-        let removed = prompts.removeFirst()
+        var removed = prompts.removeFirst()
+        
+        let pool = [
+            "#b8e6d6", // Mint
+            "#dcd6f7", // Lilac
+            "#f4e06d", // Mustard
+            "#FFB067", // Tangerine
+            "#FF9CEE", // Bubblegum
+            "#90E0EF", // Turquoise
+            "#D4ED6D"  // Lime
+        ]
+        let avoid = prompts.last?.colorHex ?? ""
+        let available = pool.filter { $0 != avoid }
+        
+        removed.colorHex = available.randomElement() ?? pool.first!
+        
         prompts.append(removed)
         offset = .zero
     }
