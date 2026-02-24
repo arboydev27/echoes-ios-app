@@ -16,22 +16,22 @@ struct SparkView: View {
                 // Header
                 HStack {
                     Button(action: {}) {
-                        Image(systemName: "arrow.left")
-                            .font(.title2)
+                        Image(systemName: "line.3.horizontal")
+                            .font(.title3)
                             .foregroundColor(.neoCharcoal)
                     }
                     
                     Spacer()
                     
                     Text("The Spark")
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.system(size: 28, weight: .heavy))
                         .foregroundColor(.neoCharcoal)
                     
                     Spacer()
                     
                     Button(action: {}) {
                         Image(systemName: "magnifyingglass")
-                            .font(.title2)
+                            .font(.title3)
                             .foregroundColor(.neoCharcoal)
                     }
                 }
