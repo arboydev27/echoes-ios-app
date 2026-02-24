@@ -54,63 +54,44 @@ struct SparkView: View {
                 
                 // Card Stack
                 ZStack {
-                    // Background Card 1
-                    RoundedRectangle(cornerRadius: 32)
-                        .fill(Color(hex: prompts.count > 2 ? prompts[2].colorHex : "#b8e6d6"))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 32)
-                                .stroke(Color.neoCharcoal, lineWidth: 2)
-                        )
-                        .frame(maxWidth: .infinity)
-                        .aspectRatio(4/5, contentMode: .fit)
-                        .rotationEffect(.degrees(10))
-                        .offset(x: 15, y: 30)
-                        .padding(.horizontal, 35)
-                        .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
-                        .opacity(prompts.count > 2 ? 1 : 0)
-                    
-                    // Background Card 2
-                    RoundedRectangle(cornerRadius: 32)
-                        .fill(Color(hex: prompts.count > 1 ? prompts[1].colorHex : "#dcd6f7"))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 32)
-                                .stroke(Color.neoCharcoal, lineWidth: 2)
-                        )
-                        .frame(maxWidth: .infinity)
-                        .aspectRatio(4/5, contentMode: .fit)
-                        .rotationEffect(.degrees(-6))
-                        .offset(x: -10, y: 15)
-                        .padding(.horizontal, 20)
-                        .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
-                        .opacity(prompts.count > 1 ? 1 : 0)
-                    
-                    // Top Card (Active)
-                    if let topPrompt = prompts.first {
-                        PromptCardView(prompt: topPrompt)
-                            .padding(.horizontal, 20)
-                            .offset(x: offset.width, y: offset.height)
-                            .rotationEffect(.degrees(Double(offset.width / 10)))
-                            .gesture(
-                                DragGesture()
-                                    .onChanged { gesture in
-                                        offset = gesture.translation
-                                    }
-                                    .onEnded { _ in
-                                        withAnimation(.spring()) {
-                                            if offset.width > 100 {
-                                                // Swipe Right (Save)
-                                                swipedCard()
-                                            } else if offset.width < -100 {
-                                                // Swipe Left (Skip)
-                                                swipedCard()
+                    ForEach(Array(prompts.enumerated().reversed()), id: \.element.id) { index, prompt in
+                        if index < 4 {
+                            PromptCardView(prompt: prompt)
+                                .padding(.horizontal, cardPadding(index: index))
+                                .offset(cardOffset(index: index))
+                                .rotationEffect(.degrees(cardRotation(index: index)))
+                                .opacity(cardOpacity(index: index))
+                                .zIndex(Double(prompts.count - index))
+                                .gesture(
+                                    index == 0 ? DragGesture()
+                                        .onChanged { gesture in
+                                            offset = gesture.translation
+                                        }
+                                        .onEnded { _ in
+                                            let swipeDistance = offset.width
+                                            if abs(swipeDistance) > 100 {
+                                                // Animate swiping away
+                                                withAnimation(.easeInOut(duration: 0.3)) {
+                                                    offset.width = swipeDistance > 0 ? 500 : -500
+                                                    offset.height = 100
+                                                }
+                                                // After swipe completes, trigger the recycle
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                                    swipedCard()
+                                                }
                                             } else {
                                                 // Return to center
-                                                offset = .zero
+                                                withAnimation(.spring()) {
+                                                    offset = .zero
+                                                }
                                             }
                                         }
-                                    }
-                            )
-                    } else {
+                                    : nil
+                                )
+                        }
+                    }
+                    
+                    if prompts.isEmpty {
                         VStack {
                             Image(systemName: "checkmark.circle.fill")
                                 .font(.system(size: 60))
@@ -189,7 +170,85 @@ struct SparkView: View {
         
         removed.colorHex = available.randomElement() ?? pool.first!
         
-        prompts.append(removed)
         offset = .zero
+        prompts.append(removed)
+    }
+    
+    // MARK: - Animation Helpers
+    
+    private var dragProgress: CGFloat {
+        return min(1.0, max(0.0, abs(offset.width) / 100.0))
+    }
+    
+    private func cardOffset(index: Int) -> CGSize {
+        if index == 0 { return offset }
+        
+        let current = baseOffset(for: index)
+        let next = baseOffset(for: index - 1)
+        
+        let x = current.width + (next.width - current.width) * dragProgress
+        let y = current.height + (next.height - current.height) * dragProgress
+        return CGSize(width: x, height: y)
+    }
+    
+    private func cardRotation(index: Int) -> Double {
+        if index == 0 { return Double(offset.width / 10) }
+        
+        let current = baseRotation(for: index)
+        let next = baseRotation(for: index - 1)
+        
+        return current + (next - current) * Double(dragProgress)
+    }
+    
+    private func cardPadding(index: Int) -> CGFloat {
+        if index == 0 { return 20 }
+        
+        let current = basePadding(for: index)
+        let next = basePadding(for: index - 1)
+        return current + (next - current) * dragProgress
+    }
+    
+    private func cardOpacity(index: Int) -> Double {
+        if index == 0 { return 1.0 }
+        
+        let current = baseOpacity(for: index)
+        let next = baseOpacity(for: index - 1)
+        return current + (next - current) * Double(dragProgress)
+    }
+    
+    private func baseOffset(for index: Int) -> CGSize {
+        switch index {
+        case 0: return .zero
+        case 1: return CGSize(width: -10, height: 15)
+        case 2: return CGSize(width: 15, height: 30)
+        default: return CGSize(width: 15, height: 45)
+        }
+    }
+    
+    private func baseRotation(for index: Int) -> Double {
+        switch index {
+        case 0: return 0
+        case 1: return -6
+        case 2: return 10
+        default: return 10
+        }
+    }
+    
+    private func basePadding(for index: Int) -> CGFloat {
+        switch index {
+        case 0: return 20
+        case 1: return 20
+        case 2: return 35
+        default: return 50
+        }
+    }
+    
+    private func baseOpacity(for index: Int) -> Double {
+        switch index {
+        case 0: return 1.0
+        case 1: return 1.0
+        case 2: return 1.0
+        default: return 0.0
+        }
     }
 }
