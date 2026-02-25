@@ -24,7 +24,7 @@ struct MainTabView: View {
             CustomTabBar(selectedTab: $selectedTab, showCapture: $showCapture)
         }
         .fullScreenCover(isPresented: $showCapture) {
-            CaptureView()
+            CaptureView(startImmediately: false)
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
     }

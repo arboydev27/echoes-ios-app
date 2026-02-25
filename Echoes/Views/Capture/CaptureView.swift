@@ -8,8 +8,14 @@ struct CaptureView: View {
     @AppStorage("enableCountdown") private var enableCountdown = true
     @State private var countdown: Int = 3
     @State private var isRecording = false
+    @State private var hasStarted: Bool
     @State private var timeElapsed: TimeInterval = 0
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
+    init(prompt: Prompt? = nil, startImmediately: Bool = true) {
+        self.prompt = prompt
+        self._hasStarted = State(initialValue: startImmediately)
+    }
     
     var timeString: String {
         let minutes = Int(timeElapsed) / 60
@@ -96,7 +102,7 @@ struct CaptureView: View {
                 
                 BlobVisualizerView(isRecording: isRecording)
                 
-                if countdown > 0 && enableCountdown {
+                if hasStarted && countdown > 0 && enableCountdown {
                     Text("\(countdown)")
                         .neoRetroFont(size: 140, weight: .heavy, isSerif: true)
                         .foregroundColor(.neoInk)
@@ -126,28 +132,46 @@ struct CaptureView: View {
             HStack(spacing: 32) {
                 // Pause Button
                 Button(action: {
-                    isRecording.toggle()
+                    if hasStarted {
+                        isRecording.toggle()
+                    }
                 }) {
                     Image(systemName: isRecording ? "pause.fill" : "play.fill")
                         .font(.title2)
                 }
                 .buttonStyle(NeoRetroIconButtonStyle(size: 56))
+                .opacity(hasStarted ? 1.0 : 0.5)
+                .disabled(!hasStarted)
                 
-                // Stop Button
+                // Stop / Record Button
                 Button(action: {
-                    isRecording = false
-                    // Handle save and route to Connection screen
-                    dismiss()
+                    if !hasStarted {
+                        // Start the process
+                        withAnimation {
+                            hasStarted = true
+                        }
+                        startCaptureSequence()
+                    } else {
+                        isRecording = false
+                        // Handle save and route to Connection screen
+                        dismiss()
+                    }
                 }) {
                     ZStack {
                         Circle()
                             .fill(Color.neoPrimary)
                             .frame(width: 96, height: 96)
                         
-                        Rectangle()
-                            .fill(Color.neoCharcoal)
-                            .frame(width: 32, height: 32)
-                            .cornerRadius(4)
+                        if hasStarted {
+                            Rectangle()
+                                .fill(Color.neoCharcoal)
+                                .frame(width: 32, height: 32)
+                                .cornerRadius(4)
+                        } else {
+                            Image(systemName: "mic.fill")
+                                .font(.system(size: 32, weight: .bold))
+                                .foregroundColor(.neoCharcoal)
+                        }
                     }
                 }
                 .buttonStyle(NeoRetroIconButtonStyle(backgroundColor: .clear, foregroundColor: .clear, size: 96))
@@ -160,7 +184,7 @@ struct CaptureView: View {
                 .buttonStyle(NeoRetroIconButtonStyle(size: 56))
             }
             
-            Text("Tap square to finish")
+            Text(hasStarted ? "Tap square to finish" : "Tap mic to capture")
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.neoCharcoal.opacity(0.6))
                 .padding(.top, 24)
@@ -168,21 +192,37 @@ struct CaptureView: View {
         }
         .background(Color.neoBackground.ignoresSafeArea())
         .onAppear {
-            if !enableCountdown {
-                countdown = 0
-                isRecording = true
+            if hasStarted {
+                startCaptureSequence()
             }
         }
         .onReceive(timer) { _ in
-            if countdown > 0 && enableCountdown {
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                    countdown -= 1
-                }
-                if countdown == 0 {
-                    isRecording = true
-                }
-            } else if isRecording {
+            if isRecording {
                 timeElapsed += 1
+            }
+        }
+    }
+    
+    private func startCaptureSequence() {
+        if !enableCountdown {
+            countdown = 0
+            isRecording = true
+            return
+        }
+        
+        Task {
+            // We start at 3, wait 1s, go to 2, wait 1s, go to 1, wait 1s, go to 0.
+            while countdown > 0 {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                if !hasStarted { break } // Canceled
+                await MainActor.run {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                        countdown -= 1
+                    }
+                    if countdown == 0 {
+                        isRecording = true
+                    }
+                }
             }
         }
     }
