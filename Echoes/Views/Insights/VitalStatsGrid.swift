@@ -84,6 +84,7 @@ struct StatCard: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.neoCharcoal, lineWidth: 2)
         )
+        .compositingGroup()
         .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
     }
 }
@@ -155,6 +156,7 @@ struct TopicMixCard: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.neoCharcoal, lineWidth: 2)
         )
+        .compositingGroup()
         .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
     }
     

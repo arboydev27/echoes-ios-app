@@ -12,6 +12,7 @@ struct NeoRetroCardModifier: ViewModifier {
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .stroke(Color.neoCharcoal, lineWidth: 2)
             )
+            .compositingGroup()
             .shadow(color: Color.neoCharcoal, radius: 0, x: 4, y: 4)
     }
 }

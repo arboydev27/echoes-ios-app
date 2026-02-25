@@ -29,7 +29,7 @@ struct LegacyConstellationView: View {
                 ZStack {
                     // Background pattern
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.neoBackground)
+                        .fill(Color.neoMaize)
                         .overlay(
                             // Optional: Dotted pattern
                             GeometryReader { geo in
@@ -47,6 +47,7 @@ struct LegacyConstellationView: View {
                             RoundedRectangle(cornerRadius: 16)
                                 .stroke(Color.neoCharcoal, lineWidth: 2)
                         )
+                        .compositingGroup()
                         .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
                     
                     // Lines
@@ -115,6 +116,7 @@ struct ConstellationNode: View {
                         Circle()
                             .stroke(Color.neoCharcoal, lineWidth: 2)
                     )
+                    .compositingGroup()
                     .shadow(color: .neoCharcoal, radius: 0, x: isCentral ? 4 : 2, y: isCentral ? 4 : 2)
                 
                 Image(systemName: iconName)
