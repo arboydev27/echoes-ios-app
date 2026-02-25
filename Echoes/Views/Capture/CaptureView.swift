@@ -5,7 +5,9 @@ struct CaptureView: View {
     @Environment(\.dismiss) var dismiss
     var prompt: Prompt?
     
-    @State private var isRecording = true
+    @AppStorage("enableCountdown") private var enableCountdown = true
+    @State private var countdown: Int = 3
+    @State private var isRecording = false
     @State private var timeElapsed: TimeInterval = 0
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
@@ -93,6 +95,16 @@ struct CaptureView: View {
                     .opacity(0.6)
                 
                 BlobVisualizerView(isRecording: isRecording)
+                
+                if countdown > 0 && enableCountdown {
+                    Text("\(countdown)")
+                        .neoRetroFont(size: 140, weight: .heavy, isSerif: true)
+                        .foregroundColor(.neoInk)
+                        .shadow(color: .white, radius: 0, x: 4, y: 4)
+                        .transition(.scale(scale: 2.0).combined(with: .opacity))
+                        .id(countdown)
+                        .zIndex(2)
+                }
             }
             .frame(height: 300)
             
@@ -107,6 +119,7 @@ struct CaptureView: View {
                         .animation(.easeInOut(duration: 0.2), value: isRecording)
                 }
             }
+            .frame(height: 30)
             .padding(.bottom, 32)
             
             // Primary Controls
@@ -154,8 +167,21 @@ struct CaptureView: View {
                 .padding(.bottom, 40)
         }
         .background(Color.neoBackground.ignoresSafeArea())
+        .onAppear {
+            if !enableCountdown {
+                countdown = 0
+                isRecording = true
+            }
+        }
         .onReceive(timer) { _ in
-            if isRecording {
+            if countdown > 0 && enableCountdown {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                    countdown -= 1
+                }
+                if countdown == 0 {
+                    isRecording = true
+                }
+            } else if isRecording {
                 timeElapsed += 1
             }
         }
