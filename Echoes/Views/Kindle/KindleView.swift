@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SparkView: View {
+struct KindleView: View {
     @State private var prompts: [Prompt] = Prompt.samples
     @State private var offset: CGSize = .zero
     
@@ -24,7 +24,7 @@ struct SparkView: View {
                     
                     Spacer()
                     
-                    Text("The Spark")
+                    Text("The Kindle")
                         .font(.system(size: 28, weight: .heavy))
                         .foregroundColor(.neoCharcoal)
                     

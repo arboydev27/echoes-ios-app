@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 @Observable
-class InsightsViewModel {
+class OrbitViewModel {
     var totalMemories: Int = 0
     var totalHours: Double = 0
     var currentStreak: Int = 0

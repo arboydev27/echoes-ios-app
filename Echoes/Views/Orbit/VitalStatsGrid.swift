@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct VitalStatsGrid: View {
-    @Bindable var viewModel: InsightsViewModel
+    @Bindable var viewModel: OrbitViewModel
     
     var body: some View {
         VStack(spacing: 16) {

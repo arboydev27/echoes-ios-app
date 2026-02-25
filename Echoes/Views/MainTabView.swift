@@ -7,16 +7,16 @@ struct MainTabView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                VaultView()
+                LibraryView()
                     .tag(0)
                 
-                SparkView()
+                KindleView()
                     .tag(1)
                 
                 Color.clear
                     .tag(2)
                 
-                InsightsView()
+                OrbitView()
                     .tag(3)
             }
             .toolbar(.hidden, for: .tabBar)
@@ -36,15 +36,15 @@ struct CustomTabBar: View {
     
     var body: some View {
         HStack(spacing: 0) {
-            TabBarButton(icon: "book.fill", title: "Vault", isSelected: selectedTab == 0) {
+            TabBarButton(icon: "film.stack.fill", title: "Library", isSelected: selectedTab == 0) {
                 selectedTab = 0
             }
             
-            TabBarButton(icon: "sparkles", title: "Spark", isSelected: selectedTab == 1) {
+            TabBarButton(icon: "flame.fill", title: "Kindle", isSelected: selectedTab == 1) {
                 selectedTab = 1
             }
             
-            TabBarButton(icon: "mic.fill", title: "Record", isSelected: false) {
+            TabBarButton(icon: "mic.fill", title: "Capture", isSelected: false) {
                 showCapture = true
             }
             

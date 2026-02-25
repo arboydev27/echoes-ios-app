@@ -49,7 +49,7 @@ struct SettingsView: View {
                         // Privacy & Security Section
                         SettingsSection(title: "Privacy & Security") {
                             Toggle(isOn: $privacyMode) {
-                                SettingsRowLabel(icon: "faceid", title: "Privacy Mode", subtitle: "Lock the Vault with FaceID/TouchID.")
+                                SettingsRowLabel(icon: "faceid", title: "Privacy Mode", subtitle: "Lock the Library with FaceID/TouchID.")
                             }
                             .tint(.neoMint)
                             

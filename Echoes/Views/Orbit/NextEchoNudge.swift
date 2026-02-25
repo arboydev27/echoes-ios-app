@@ -12,7 +12,7 @@ struct NextEchoNudge: View {
                 .tracking(1.0)
             
             Button(action: {
-                // In a real app, this would route to the Spark tab via an environment variable
+                // In a real app, this would route to the Kindle tab via an environment variable
                 // For now, it's just visually connecting to the concept
             }) {
                 HStack(spacing: 16) {

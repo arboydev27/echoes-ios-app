@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-struct VaultView: View {
+struct LibraryView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \MemoryCard.date, order: .reverse) private var memories: [MemoryCard]
     @State private var searchText = ""
@@ -39,7 +39,7 @@ struct VaultView: View {
                         
                         Spacer()
                         
-                        Text("The Vault")
+                        Text("The Library")
                             .font(.system(size: 28, weight: .heavy))
                             .foregroundColor(.neoCharcoal)
                         

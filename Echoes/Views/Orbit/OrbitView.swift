@@ -1,11 +1,11 @@
 import SwiftUI
 import SwiftData
 
-struct InsightsView: View {
+struct OrbitView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var memoryCards: [MemoryCard]
     
-    @State private var viewModel = InsightsViewModel()
+    @State private var viewModel = OrbitViewModel()
     @State private var showSettings = false
     
     var body: some View {
@@ -80,6 +80,6 @@ struct InsightsView: View {
 }
 
 #Preview {
-    InsightsView()
+    OrbitView()
         .modelContainer(for: MemoryCard.self, inMemory: true)
 }
