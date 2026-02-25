@@ -40,7 +40,7 @@ struct InsightsView: View {
                             .padding(.vertical, 8)
                         
                         VStack(spacing: 4) {
-                            Text("\(String(format: "%.1f", viewModel.totalHours)) Hours")
+                            Text("\(viewModel.totalMemories)")
                                 .font(.system(size: 36, weight: .heavy))
                                 .foregroundColor(.neoCharcoal)
                             

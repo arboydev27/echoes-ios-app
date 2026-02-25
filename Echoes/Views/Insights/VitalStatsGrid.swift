@@ -45,7 +45,7 @@ struct StatCard: View {
     var textColor: Color
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(title)
                     .font(.system(size: 10, weight: .bold))
@@ -59,11 +59,11 @@ struct StatCard: View {
                     .font(.system(size: 14))
             }
             
-            Spacer(minLength: 16)
+            Spacer(minLength: 0)
             
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text(value)
-                    .font(.system(size: 28, weight: .bold))
+                    .font(.system(size: 48, weight: .bold))
                 
                 Text(unit)
                     .font(.system(size: 12, weight: .semibold))
