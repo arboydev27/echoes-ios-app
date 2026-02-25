@@ -16,7 +16,7 @@ struct MainTabView: View {
                 Color.clear
                     .tag(2)
                 
-                ProfileView()
+                InsightsView()
                     .tag(3)
             }
             .toolbar(.hidden, for: .tabBar)
@@ -48,7 +48,7 @@ struct CustomTabBar: View {
                 showCapture = true
             }
             
-            TabBarButton(icon: "person.crop.circle.fill", title: "Profile", isSelected: selectedTab == 3) {
+            TabBarButton(icon: "circle.hexagonpath", title: "Orbit", isSelected: selectedTab == 3) {
                 selectedTab = 3
             }
         }
