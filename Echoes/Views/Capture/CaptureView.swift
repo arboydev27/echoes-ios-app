@@ -153,8 +153,14 @@ struct CaptureView: View {
                 // Stop / Record Button
                 Button(action: {
                     if sessionManager.state == .idle {
-                        // Start the process
-                        sessionManager.startSequence()
+                        // Ensure permissions before starting
+                        Task {
+                            if !sessionManager.hasPermissions {
+                                let granted = await sessionManager.requestAllPermissions()
+                                guard granted else { return }
+                            }
+                            sessionManager.startSequence()
+                        }
                     } else if sessionManager.state == .recording {
                         // Handle stop and process
                         withAnimation {

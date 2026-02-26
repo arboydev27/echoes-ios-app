@@ -27,6 +27,7 @@ final class CaptureSessionManager {
     var transcript: String = ""
     var themeTag: String = ""
     var tempAudioURL: URL?
+    var hasPermissions: Bool = false
     
     // Timer for countdown
     private var countdownTimer: Timer?
@@ -53,9 +54,10 @@ final class CaptureSessionManager {
         
         // Speech Recognition
         let speechGranted = await transcriber.requestPermission()
-        guard speechGranted else { return false }
         
-        return true
+        let allGranted = audioGranted && cameraGranted && speechGranted
+        self.hasPermissions = allGranted
+        return allGranted
     }
     
     // MARK: - Sequence Methods
