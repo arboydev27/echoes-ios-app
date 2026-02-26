@@ -11,6 +11,8 @@ struct CaptureView: View {
     @State private var hasStarted: Bool
     @State private var timeElapsed: TimeInterval = 0
     @State private var showSavedToast = false
+    @State private var showFinalizeSheet = false
+    @State private var recordedAudioURL: URL? = nil
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     init(prompt: Prompt? = nil, startImmediately: Bool = true) {
@@ -154,19 +156,13 @@ struct CaptureView: View {
                         }
                         startCaptureSequence()
                     } else {
-                        // Handle save and reset state
+                        // Handle stop and show finalize sheet
                         withAnimation {
                             isRecording = false
                             hasStarted = false
-                            timeElapsed = 0
-                            countdown = 3
-                            showSavedToast = true
-                        }
-                        
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            withAnimation {
-                                showSavedToast = false
-                            }
+                            // In a real app, we'd get the actual URL here
+                            recordedAudioURL = URL(string: "file:///tmp/echo.m4a") 
+                            showFinalizeSheet = true
                         }
                     }
                 }) {
@@ -229,6 +225,23 @@ struct CaptureView: View {
             }
         }
         .background(Color.neoBackground.ignoresSafeArea())
+        .sheet(isPresented: $showFinalizeSheet) {
+            FinalizeEchoSheet(prompt: prompt, audioURL: recordedAudioURL) {
+                // When saved, reset local state and show toast
+                timeElapsed = 0
+                countdown = 3
+                withAnimation {
+                    showSavedToast = true
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    withAnimation {
+                        showSavedToast = false
+                    }
+                }
+            }
+            .presentationDetents([.medium])
+        }
         .onAppear {
             if hasStarted {
                 startCaptureSequence()

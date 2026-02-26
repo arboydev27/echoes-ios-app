@@ -11,6 +11,7 @@ final class EchoCard {
     var transcript: String?
     var location: String?
     var imageName: String?
+    @Attribute(.externalStorage) var imageData: Data?
     
     init(
         id: UUID = UUID(),
@@ -20,7 +21,8 @@ final class EchoCard {
         audioFileName: String? = nil,
         transcript: String? = nil,
         location: String? = nil,
-        imageName: String? = nil
+        imageName: String? = nil,
+        imageData: Data? = nil
     ) {
         self.id = id
         self.title = title
@@ -30,6 +32,7 @@ final class EchoCard {
         self.transcript = transcript
         self.location = location
         self.imageName = imageName
+        self.imageData = imageData
     }
     
     // Helper to get category color

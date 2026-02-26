@@ -14,16 +14,23 @@ struct NeoRetroButtonStyle: ButtonStyle {
             .foregroundColor(foregroundColor)
             .padding(.horizontal, isPaddingEnabled ? 20 : 0)
             .padding(.vertical, isPaddingEnabled ? 12 : 0)
-            .background(backgroundColor)
-            .cornerRadius(cornerRadius)
+            .background(
+                ZStack {
+                    // Shadow layer
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .fill(Color.neoCharcoal)
+                        .offset(x: configuration.isPressed ? 0 : shadowOffset,
+                                y: configuration.isPressed ? 0 : shadowOffset)
+                    
+                    // Main background layer
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .fill(backgroundColor)
+                }
+            )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .stroke(Color.neoCharcoal, lineWidth: borderWidth)
             )
-            .shadow(color: configuration.isPressed ? .clear : Color.neoCharcoal,
-                    radius: 0,
-                    x: configuration.isPressed ? 0 : shadowOffset,
-                    y: configuration.isPressed ? 0 : shadowOffset)
             .offset(x: configuration.isPressed ? shadowOffset : 0,
                     y: configuration.isPressed ? shadowOffset : 0)
             .animation(.interactiveSpring(response: 0.2, dampingFraction: 0.7), value: configuration.isPressed)
@@ -39,16 +46,23 @@ struct NeoRetroIconButtonStyle: ButtonStyle {
         configuration.label
             .foregroundColor(foregroundColor)
             .frame(width: size, height: size)
-            .background(backgroundColor)
-            .clipShape(Circle())
+            .background(
+                ZStack {
+                    // Shadow layer
+                    Circle()
+                        .fill(Color.neoCharcoal)
+                        .offset(x: configuration.isPressed ? 0 : 2,
+                                y: configuration.isPressed ? 0 : 2)
+                    
+                    // Main background layer
+                    Circle()
+                        .fill(backgroundColor)
+                }
+            )
             .overlay(
                 Circle()
                     .stroke(Color.neoCharcoal, lineWidth: 2)
             )
-            .shadow(color: configuration.isPressed ? .clear : Color.neoCharcoal,
-                    radius: 0,
-                    x: configuration.isPressed ? 0 : 2,
-                    y: configuration.isPressed ? 0 : 2)
             .offset(x: configuration.isPressed ? 2 : 0,
                     y: configuration.isPressed ? 2 : 0)
             .animation(.interactiveSpring(response: 0.2, dampingFraction: 0.7), value: configuration.isPressed)
