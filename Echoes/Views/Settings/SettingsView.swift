@@ -176,7 +176,7 @@ struct SettingsView: View {
                                 showResetAlert = true
                             }) {
                                 HStack {
-                                    SettingsRowLabel(icon: "trash", title: "Reset Data", subtitle: "Clear all memories in the vault.", tintColor: .red)
+                                    SettingsRowLabel(icon: "trash", title: "Reset Data", subtitle: "Clear all echoes in the library.", tintColor: .red)
                                     Spacer()
                                 }
                             }
@@ -201,7 +201,7 @@ struct SettingsView: View {
                     Button("Cancel", role: .cancel) { }
                     Button("Delete", role: .destructive) {
                         do {
-                            try modelContext.delete(model: MemoryCard.self)
+                            try modelContext.delete(model: EchoCard.self)
                         } catch {
                             print("Error clearing data: \(error)")
                         }

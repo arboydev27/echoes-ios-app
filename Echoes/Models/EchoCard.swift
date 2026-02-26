@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class MemoryCard {
+final class EchoCard {
     var id: UUID
     var title: String
     var date: Date

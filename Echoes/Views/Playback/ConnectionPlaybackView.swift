@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ConnectionPlaybackView: View {
-    let memory: MemoryCard
+    let echo: EchoCard
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -16,7 +16,7 @@ struct ConnectionPlaybackView: View {
                 
                 Spacer()
                 
-                Text(memory.title.uppercased())
+                Text(echo.title.uppercased())
                     .font(.system(size: 14, weight: .heavy))
                     .foregroundColor(.neoCharcoal)
                     .tracking(2)
@@ -38,7 +38,7 @@ struct ConnectionPlaybackView: View {
                 // Simplified Memory Card
                 VStack(spacing: 0) {
                     Rectangle()
-                        .fill(Color(hex: memory.categoryColorHex).opacity(0.3))
+                        .fill(Color(hex: echo.categoryColorHex).opacity(0.3))
                         .overlay(
                             Image(systemName: "photo.on.rectangle.angled")
                                 .font(.system(size: 56))
@@ -50,12 +50,12 @@ struct ConnectionPlaybackView: View {
                     
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(memory.title)
+                            Text(echo.title)
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.neoCharcoal)
                                 .lineLimit(1)
                             
-                            Text("\(memory.date.formatted(date: .abbreviated, time: .omitted)) • \(memory.category.uppercased())")
+                            Text("\(echo.date.formatted(date: .abbreviated, time: .omitted)) • \(echo.category.uppercased())")
                                 .font(.system(size: 10, weight: .bold))
                                 .foregroundColor(.neoCharcoal.opacity(0.6))
                         }

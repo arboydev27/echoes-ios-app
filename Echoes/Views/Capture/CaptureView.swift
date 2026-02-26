@@ -73,7 +73,7 @@ struct CaptureView: View {
             
             // Prompt Area
             VStack(spacing: 12) {
-                Text("TOPIC: \(prompt?.category.uppercased() ?? "SPARK")")
+                Text("TOPIC: \(prompt?.category.uppercased() ?? "KINDLE")")
                     .font(.system(size: 12, weight: .heavy))
                     .foregroundColor(.neoPrimary)
                     .tracking(2)
@@ -211,7 +211,7 @@ struct CaptureView: View {
                         .foregroundColor(.neoMint)
                         .font(.title3)
                     
-                    Text("Memory saved to Vault")
+                    Text("Echo saved to Library")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.white)
                 }

@@ -3,17 +3,17 @@ import SwiftData
 
 struct LibraryView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \MemoryCard.date, order: .reverse) private var memories: [MemoryCard]
+    @Query(sort: \EchoCard.date, order: .reverse) private var echoes: [EchoCard]
     @State private var searchText = ""
     @State private var selectedFilter: String? = nil
     @State private var showSettings = false
     
     let filters = ["Childhood", "Romance", "Travel", "Family", "Home"]
     
-    var filteredMemories: [MemoryCard] {
-        memories.filter { memory in
-            let matchesSearch = searchText.isEmpty || memory.title.localizedCaseInsensitiveContains(searchText)
-            let matchesFilter = selectedFilter == nil || memory.category.localizedCaseInsensitiveCompare(selectedFilter!) == .orderedSame
+    var filteredEchoes: [EchoCard] {
+        echoes.filter { echo in
+            let matchesSearch = searchText.isEmpty || echo.title.localizedCaseInsensitiveContains(searchText)
+            let matchesFilter = selectedFilter == nil || echo.category.localizedCaseInsensitiveCompare(selectedFilter!) == .orderedSame
             return matchesSearch && matchesFilter
         }
     }
@@ -88,7 +88,7 @@ struct LibraryView: View {
                     
                     // Grid
                     ScrollView {
-                        if filteredMemories.isEmpty {
+                        if filteredEchoes.isEmpty {
                             VStack(spacing: 16) {
                                 Spacer().frame(height: 48)
                                 Image(systemName: "auto.stories")
@@ -100,9 +100,9 @@ struct LibraryView: View {
                             }
                         } else {
                             LazyVGrid(columns: columns, spacing: 16) {
-                                ForEach(filteredMemories) { memory in
-                                    NavigationLink(destination: Text("Connection view for \(memory.title)")) {
-                                        MemoryCardTileView(memory: memory)
+                                ForEach(filteredEchoes) { echo in
+                                    NavigationLink(destination: Text("Connection view for \(echo.title)")) {
+                                        EchoCardTileView(echo: echo)
                                     }
                                 }
                             }

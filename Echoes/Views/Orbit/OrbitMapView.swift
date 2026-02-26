@@ -1,12 +1,12 @@
 import SwiftUI
 
-struct LegacyConstellationView: View {
+struct OrbitMapView: View {
     @State private var isAnimating = false
     
     var body: some View {
         VStack {
             HStack {
-                Text("Legacy Constellation")
+                Text("Orbit")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundColor(.neoCharcoal.opacity(0.6))
                     .textCase(.uppercase)
@@ -69,23 +69,23 @@ struct LegacyConstellationView: View {
                     .stroke(Color.neoCharcoal, style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
                     
                     // Center Node (You)
-                    ConstellationNode(title: "You", iconName: "person.fill", isCentral: true, color: .neoPrimary)
+                    OrbitNode(title: "You", iconName: "person.fill", isCentral: true, color: .neoPrimary)
                         .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     
                     // Grandpa
-                    ConstellationNode(title: "Grandpa", iconName: "person.2.fill", color: .white)
+                    OrbitNode(title: "Grandpa", iconName: "person.2.fill", color: .white)
                         .position(x: geometry.size.width * 0.25, y: geometry.size.height * 0.25)
                         .offset(y: isAnimating ? -5 : 5)
                         .animation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true), value: isAnimating)
                     
                     // Mom
-                    ConstellationNode(title: "Mom", iconName: "person.2.fill", color: .white)
+                    OrbitNode(title: "Mom", iconName: "person.2.fill", color: .white)
                         .position(x: geometry.size.width * 0.75, y: geometry.size.height * 0.3)
                         .offset(y: isAnimating ? 5 : -5)
                         .animation(.easeInOut(duration: 3.2).repeatForever(autoreverses: true), value: isAnimating)
                     
                     // Invite Node
-                    ConstellationNode(title: "Invite", iconName: "plus", color: .white, isGhost: true)
+                    OrbitNode(title: "Invite", iconName: "plus", color: .white, isGhost: true)
                         .position(x: geometry.size.width * 0.75, y: geometry.size.height * 0.8)
                         .offset(y: isAnimating ? -3 : 3)
                         .animation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true), value: isAnimating)
@@ -99,7 +99,7 @@ struct LegacyConstellationView: View {
     }
 }
 
-struct ConstellationNode: View {
+struct OrbitNode: View {
     var title: String
     var iconName: String
     var isCentral: Bool = false

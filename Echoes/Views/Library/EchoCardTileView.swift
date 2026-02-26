@@ -1,12 +1,12 @@
 import SwiftUI
 
-struct MemoryCardTileView: View {
-    let memory: MemoryCard
+struct EchoCardTileView: View {
+    let echo: EchoCard
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Rectangle()
-                .fill(Color(hex: memory.categoryColorHex).opacity(0.4))
+                .fill(Color(hex: echo.categoryColorHex).opacity(0.4))
                 .overlay(
                     Image(systemName: "photo.on.rectangle.angled")
                         .font(.system(size: 40))
@@ -22,7 +22,7 @@ struct MemoryCardTileView: View {
                 .padding(.top, 8)
             
             VStack(alignment: .leading, spacing: 8) {
-                Text(memory.category.uppercased())
+                Text(echo.category.uppercased())
                     .font(.system(size: 10, weight: .heavy))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -36,7 +36,7 @@ struct MemoryCardTileView: View {
                     .compositingGroup()
                     .shadow(color: .neoCharcoal, radius: 0, x: 2, y: 2)
                 
-                Text(memory.title)
+                Text(echo.title)
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(.neoCharcoal)
                     .lineLimit(2)
@@ -45,7 +45,7 @@ struct MemoryCardTileView: View {
                 
                 Spacer(minLength: 4)
                 
-                Text(memory.date.formatted(date: .abbreviated, time: .omitted))
+                Text(echo.date.formatted(date: .abbreviated, time: .omitted))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.neoCharcoal.opacity(0.6))
             }
@@ -54,7 +54,7 @@ struct MemoryCardTileView: View {
             .padding(.bottom, 12)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(hex: memory.categoryColorHex))
+        .background(Color(hex: echo.categoryColorHex))
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)

@@ -12,7 +12,7 @@ import SwiftData
 struct EchoesApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            MemoryCard.self,
+            EchoCard.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -23,12 +23,12 @@ struct EchoesApp: App {
             // Synchronous deep wipe and reset for debugging
             Task { @MainActor in
                 do {
-                    try container.mainContext.delete(model: MemoryCard.self)
+                    try container.mainContext.delete(model: EchoCard.self)
                     
-                    let sample1 = MemoryCard(title: "The Summer of '65", category: "Childhood", imageName: "dummy_image_1")
-                    let sample2 = MemoryCard(title: "First Date at the Diner", category: "Romance", imageName: "dummy_image_2")
-                    let sample3 = MemoryCard(title: "Trip to Paris 1980", category: "Travel", imageName: "dummy_image_3")
-                    let sample4 = MemoryCard(title: "Holiday at the Cabin", category: "Family", imageName: "dummy_image_4")
+                    let sample1 = EchoCard(title: "The Summer of '65", category: "Childhood", imageName: "dummy_image_1")
+                    let sample2 = EchoCard(title: "First Date at the Diner", category: "Romance", imageName: "dummy_image_2")
+                    let sample3 = EchoCard(title: "Trip to Paris 1980", category: "Travel", imageName: "dummy_image_3")
+                    let sample4 = EchoCard(title: "Holiday at the Cabin", category: "Family", imageName: "dummy_image_4")
                     
                     container.mainContext.insert(sample1)
                     container.mainContext.insert(sample2)

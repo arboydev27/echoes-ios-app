@@ -3,7 +3,7 @@ import SwiftData
 
 struct OrbitView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var memoryCards: [MemoryCard]
+    @Query private var echoCards: [EchoCard]
     
     @State private var viewModel = OrbitViewModel()
     @State private var showSettings = false
@@ -36,7 +36,7 @@ struct OrbitView: View {
                         .padding(.top, 8)
                         
                         // Main Sections
-                        LegacyConstellationView()
+                        OrbitMapView()
                             .padding(.vertical, 8)
                         
                         VStack(spacing: 4) {
@@ -64,10 +64,10 @@ struct OrbitView: View {
             .onAppear {
                 // Animate changes or just calculate normally
                 withAnimation(.spring()) {
-                    viewModel.calculateStats(from: memoryCards)
+                    viewModel.calculateStats(from: echoCards)
                 }
             }
-            .onChange(of: memoryCards) { _, newCards in
+            .onChange(of: echoCards) { _, newCards in
                 withAnimation(.spring()) {
                     viewModel.calculateStats(from: newCards)
                 }
@@ -81,5 +81,5 @@ struct OrbitView: View {
 
 #Preview {
     OrbitView()
-        .modelContainer(for: MemoryCard.self, inMemory: true)
+        .modelContainer(for: EchoCard.self, inMemory: true)
 }
