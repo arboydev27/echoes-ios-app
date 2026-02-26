@@ -4,26 +4,25 @@ import Combine
 struct CaptureView: View {
     @Environment(\.dismiss) var dismiss
     var prompt: Prompt?
+    var startImmediately: Bool
     
     @AppStorage("enableCountdown") private var enableCountdown = true
-    @State private var countdown: Int = 3
-    @State private var isRecording = false
-    @State private var hasStarted: Bool
     @State private var timeElapsed: TimeInterval = 0
     @State private var showSavedToast = false
     @State private var showFinalizeSheet = false
-    @State private var recordedAudioURL: URL? = nil
     
     // Core Services
-    @State private var audioManager = AudioRecorderManager()
-    @State private var cameraService = CameraStreamService()
-    @State private var faceTracking = FaceTrackingService()
+    @State private var sessionManager = CaptureSessionManager()
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     init(prompt: Prompt? = nil, startImmediately: Bool = true) {
         self.prompt = prompt
-        self._hasStarted = State(initialValue: startImmediately)
+        self.startImmediately = startImmediately
+    }
+    
+    private var hasStarted: Bool {
+        sessionManager.state != .idle && sessionManager.state != .saved
     }
     
     var timeString: String {
@@ -52,7 +51,7 @@ struct CaptureView: View {
                     Circle()
                         .fill(Color.red)
                         .frame(width: 8, height: 8)
-                        .opacity(isRecording ? (Int(timeElapsed) % 2 == 0 ? 1 : 0.3) : 1) // Pulse
+                        .opacity(sessionManager.state == .recording ? (Int(timeElapsed) % 2 == 0 ? 1 : 0.3) : 1) // Pulse
                     
                     Text(timeString)
                         .font(.system(size: 14, weight: .bold, design: .monospaced))
@@ -110,15 +109,15 @@ struct CaptureView: View {
                     .offset(x: -120, y: 80)
                     .opacity(0.6)
                 
-                BlobVisualizerView(isRecording: isRecording)
+                BlobVisualizerView(isRecording: sessionManager.state == .recording)
                 
-                if hasStarted && countdown > 0 && enableCountdown {
-                    Text("\(countdown)")
+                if hasStarted && sessionManager.countdown > 0 && enableCountdown {
+                    Text("\(sessionManager.countdown)")
                         .neoRetroFont(size: 140, weight: .heavy, isSerif: true)
                         .foregroundColor(.neoInk)
                         .shadow(color: .white, radius: 0, x: 4, y: 4)
                         .transition(.scale(scale: 2.0).combined(with: .opacity))
-                        .id(countdown)
+                        .id(sessionManager.countdown)
                         .zIndex(2)
                 }
             }
@@ -131,8 +130,8 @@ struct CaptureView: View {
                 ForEach(0..<5) { i in
                     Capsule()
                         .fill(Color.neoCharcoal.opacity(0.4))
-                        .frame(width: 4, height: isRecording ? CGFloat.random(in: 10...30) : 10)
-                        .animation(.easeInOut(duration: 0.2), value: isRecording)
+                        .frame(width: 4, height: sessionManager.state == .recording ? CGFloat.random(in: 10...30) : 10)
+                        .animation(.easeInOut(duration: 0.2), value: sessionManager.state == .recording)
                 }
             }
             .frame(height: 30)
@@ -142,11 +141,9 @@ struct CaptureView: View {
             HStack(spacing: 32) {
                 // Pause Button
                 Button(action: {
-                    if hasStarted {
-                        isRecording.toggle()
-                    }
+                    // Pause not yet supported by sessionManager state machine
                 }) {
-                    Image(systemName: isRecording ? "pause.fill" : "play.fill")
+                    Image(systemName: sessionManager.state == .recording ? "pause.fill" : "play.fill")
                         .font(.title2)
                 }
                 .buttonStyle(NeoRetroIconButtonStyle(size: 56))
@@ -155,24 +152,13 @@ struct CaptureView: View {
                 
                 // Stop / Record Button
                 Button(action: {
-                    if !hasStarted {
+                    if sessionManager.state == .idle {
                         // Start the process
+                        sessionManager.startSequence()
+                    } else if sessionManager.state == .recording {
+                        // Handle stop and process
                         withAnimation {
-                            hasStarted = true
-                        }
-                        startCaptureSequence()
-                    } else {
-                        // Handle stop and show finalize sheet
-                        withAnimation {
-                            isRecording = false
-                            hasStarted = false
-                            cameraService.stopSession()
-                            if let url = audioManager.stopRecording() {
-                                recordedAudioURL = url
-                            } else {
-                                recordedAudioURL = URL(string: "file:///tmp/echo.m4a")
-                            }
-                            showFinalizeSheet = true
+                            sessionManager.stopAndProcessSequence()
                         }
                     }
                 }) {
@@ -203,7 +189,7 @@ struct CaptureView: View {
                 .buttonStyle(NeoRetroIconButtonStyle(size: 56))
             }
             
-            Text(hasStarted ? "Tap square to finish" : "Tap mic to capture")
+            Text(sessionManager.state == .processing ? "Processing Echo..." : (hasStarted ? "Tap square to finish" : "Tap mic to capture"))
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.neoCharcoal.opacity(0.6))
                 .padding(.top, 24)
@@ -235,14 +221,20 @@ struct CaptureView: View {
             }
         }
         .background(Color.neoBackground.ignoresSafeArea())
+        .onChange(of: sessionManager.state) { _, newState in
+            if newState == .finalizing {
+                showFinalizeSheet = true
+            }
+        }
         .sheet(isPresented: $showFinalizeSheet) {
-            FinalizeEchoSheet(prompt: prompt, audioURL: recordedAudioURL, joyPins: faceTracking.joyPins) {
+            FinalizeEchoSheet(prompt: prompt, sessionManager: sessionManager) {
                 // When saved, reset local state and show toast
                 timeElapsed = 0
-                countdown = 3
                 withAnimation {
                     showSavedToast = true
                 }
+                
+                sessionManager.reset()
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     withAnimation {
@@ -251,48 +243,21 @@ struct CaptureView: View {
                 }
             }
             .presentationDetents([.medium])
+            .interactiveDismissDisabled()
         }
         .onAppear {
-            faceTracking.attach(audioManager: audioManager)
-            cameraService.onFrameGenerated = { buffer in
-                faceTracking.process(sampleBuffer: buffer)
-            }
-            
-            if hasStarted {
-                startCaptureSequence()
+            if startImmediately && sessionManager.state == .idle {
+                Task {
+                    let permissionsGranted = await sessionManager.requestAllPermissions()
+                    if permissionsGranted {
+                        sessionManager.startSequence()
+                    }
+                }
             }
         }
         .onReceive(timer) { _ in
-            if isRecording {
+            if sessionManager.state == .recording {
                 timeElapsed += 1
-            }
-        }
-    }
-    
-    private func startCaptureSequence() {
-        if !enableCountdown {
-            countdown = 0
-            isRecording = true
-            audioManager.startRecording()
-            cameraService.startSession()
-            return
-        }
-        
-        Task {
-            // We start at 3, wait 1s, go to 2, wait 1s, go to 1, wait 1s, go to 0.
-            while countdown > 0 {
-                try? await Task.sleep(nanoseconds: 1_000_000_000)
-                if !hasStarted { break } // Canceled
-                await MainActor.run {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                        countdown -= 1
-                    }
-                    if countdown == 0 {
-                        isRecording = true
-                        audioManager.startRecording()
-                        cameraService.startSession()
-                    }
-                }
             }
         }
     }
