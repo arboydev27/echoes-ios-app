@@ -86,7 +86,7 @@ struct LibraryView: View {
                         .padding(.bottom, 16)
                     }
                     
-                    // Grid
+                    // Layout
                     ScrollView {
                         if filteredEchoes.isEmpty {
                             VStack(spacing: 16) {
@@ -99,14 +99,36 @@ struct LibraryView: View {
                                     .foregroundColor(.neoCharcoal.opacity(0.5))
                             }
                         } else {
-                            LazyVGrid(columns: columns, spacing: 16) {
-                                ForEach(filteredEchoes) { echo in
-                                    NavigationLink(destination: Text("Connection view for \(echo.title)")) {
-                                        EchoCardTileView(echo: echo)
+                            VStack(spacing: 24) {
+                                let featuredCount = min(filteredEchoes.count, 3)
+                                let featuredEchoes = Array(filteredEchoes.prefix(featuredCount))
+                                let remainingEchoes = Array(filteredEchoes.dropFirst(featuredCount))
+                                
+                                if !featuredEchoes.isEmpty {
+                                    TabView {
+                                        ForEach(featuredEchoes) { echo in
+                                            NavigationLink(destination: Text("Connection view for \(echo.title)")) {
+                                                FeaturedMemoryCardView(echo: echo)
+                                            }
+                                            .buttonStyle(PlainButtonStyle())
+                                        }
                                     }
+                                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+                                    .frame(height: 520) // Height of card + dots
+                                }
+                                
+                                if !remainingEchoes.isEmpty {
+                                    LazyVGrid(columns: columns, spacing: 16) {
+                                        ForEach(remainingEchoes) { echo in
+                                            NavigationLink(destination: Text("Connection view for \(echo.title)")) {
+                                                EchoCardTileView(echo: echo)
+                                            }
+                                            .buttonStyle(PlainButtonStyle())
+                                        }
+                                    }
+                                    .padding(.horizontal)
                                 }
                             }
-                            .padding(.horizontal)
                             .padding(.bottom, 100) // Account for TabBar
                         }
                     }
