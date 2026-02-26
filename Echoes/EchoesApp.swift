@@ -13,6 +13,7 @@ struct EchoesApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             EchoCard.self,
+            Echo.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
