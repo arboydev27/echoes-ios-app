@@ -208,18 +208,21 @@ struct CaptureView: View {
             if showSavedToast {
                 HStack(spacing: 12) {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.neoMint)
+                        .foregroundColor(.neoCharcoal)
                         .font(.title3)
                     
                     Text("Echo saved to Library")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white)
+                        .foregroundColor(.neoCharcoal)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 14)
-                .background(Color.neoCharcoal)
-                .cornerRadius(24)
-                .shadow(color: .black.opacity(0.15), radius: 10, y: 5)
+                .background(Color.neoMint)
+                .cornerRadius(40)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 40)
+                        .stroke(Color.neoCharcoal, lineWidth: 2)
+                )
                 .padding(.top, 60)
                 .transition(.move(edge: .top).combined(with: .opacity))
                 .zIndex(100)
