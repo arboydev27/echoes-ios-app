@@ -92,7 +92,7 @@ final class AudioPlayerManager: NSObject, AVAudioPlayerDelegate {
         do {
             let pattern = try CHHapticPattern(events: [event], parameters: [])
             let player = try hapticEngine?.makePlayer(with: pattern)
-            try player?.start(atTime: .now)
+            try player?.start(atTime: CHHapticTimeImmediate)
         } catch {
             print("Failed to play haptic pattern: \(error)")
         }
