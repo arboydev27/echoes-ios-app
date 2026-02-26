@@ -76,13 +76,14 @@ struct EchoCardTileView: View {
             .padding(.bottom, 12)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(hex: echo.categoryColorHex))
-        .cornerRadius(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(hex: echo.categoryColorHex))
+                .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
+        )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.neoCharcoal, lineWidth: 2)
         )
-        .compositingGroup()
-        .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
     }
 }

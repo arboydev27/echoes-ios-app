@@ -93,12 +93,14 @@ struct ActiveTranscriptBubble: View {
                 .lineSpacing(4)
                 .padding(16)
         }
-        .background(Color.neoMustard)
-        .cornerRadius(12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.neoMustard)
+                .shadow(color: .neoCharcoal, radius: 0, x: 2, y: 2)
+        )
         .overlay(
             RoundedRectangle(cornerRadius: 12).stroke(Color.neoCharcoal, lineWidth: 2)
         )
-        .shadow(color: .neoCharcoal, radius: 0, x: 2, y: 2)
         .overlay(
             Text("NOW PLAYING")
                 .font(.system(size: 10, weight: .bold))

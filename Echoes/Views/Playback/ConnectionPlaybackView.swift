@@ -103,10 +103,12 @@ struct ConnectionPlaybackView: View {
                     .padding(.horizontal, 16)
                     .padding(.bottom, 16)
                 }
-                .background(Color.white)
-                .cornerRadius(16)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white)
+                        .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
+                )
                 .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.neoCharcoal, lineWidth: 3))
-                .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
                 .padding(.horizontal, 20)
                 
                 // Scrubber

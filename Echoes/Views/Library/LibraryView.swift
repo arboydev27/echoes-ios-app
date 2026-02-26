@@ -59,14 +59,15 @@ struct LibraryView: View {
                             .foregroundColor(.neoCharcoal)
                     }
                     .padding(12)
-                    .background(Color.white)
-                    .cornerRadius(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.white)
+                            .shadow(color: .neoCharcoal, radius: 0, x: 2, y: 2)
+                    )
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.neoCharcoal, lineWidth: 2)
                     )
-                    .compositingGroup()
-                    .shadow(color: .neoCharcoal, radius: 0, x: 2, y: 2)
                     .padding(.horizontal)
                     .padding(.bottom, 16)
                     
@@ -203,15 +204,16 @@ struct FilterChip: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(isSelected ? Color.neoCharcoal : Color.white)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(isSelected ? Color.neoCharcoal : Color.white)
+                    .shadow(color: isSelected ? .clear : .neoCharcoal, radius: 0, x: 2, y: 2)
+            )
             .foregroundColor(isSelected ? .white : .neoCharcoal)
-            .cornerRadius(10)
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.neoCharcoal, lineWidth: 2)
             )
-            .compositingGroup()
-            .shadow(color: isSelected ? .clear : .neoCharcoal, radius: 0, x: 2, y: 2)
             .offset(x: isSelected ? 2 : 0, y: isSelected ? 2 : 0)
         }
     }

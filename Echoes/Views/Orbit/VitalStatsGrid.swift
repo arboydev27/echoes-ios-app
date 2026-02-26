@@ -77,15 +77,16 @@ struct StatCard: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(bgColor)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(bgColor)
+                .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
+        )
         .foregroundColor(textColor)
-        .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.neoCharcoal, lineWidth: 2)
         )
-        .compositingGroup()
-        .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
     }
 }
 
@@ -150,14 +151,15 @@ struct TopicMixCard: View {
             }
         }
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.white)
+                .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
+        )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.neoCharcoal, lineWidth: 2)
         )
-        .compositingGroup()
-        .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
     }
     
     private var totalTopics: Int {

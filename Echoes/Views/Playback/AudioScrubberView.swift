@@ -24,8 +24,8 @@ struct AudioScrubberView: View {
                     // Track background
                     Capsule()
                         .fill(Color.white)
-                        .overlay(Capsule().stroke(Color.neoCharcoal, lineWidth: 2))
                         .shadow(color: .neoCharcoal, radius: 0, x: 2, y: 2)
+                        .overlay(Capsule().stroke(Color.neoCharcoal, lineWidth: 2))
                     
                     // Fill
                     Capsule()
