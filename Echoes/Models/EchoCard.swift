@@ -41,10 +41,11 @@ final class EchoCard {
         switch category.lowercased() {
         case "childhood": return "#FFB067" // Tangerine
         case "romance": return "#FF9CEE"   // Bubblegum
-        case "travel": return "#90E0EF"    // Turquoise
-        case "family": return "#D4ED6D"    // Lime
-        case "home": return "#f4e06d"      // Mustard
-        default: return "#b8e6d6"          // Mint
+        case "wisdom": return "#B8A7EA"    // Lavender
+        case "work": return "#90E0EF"      // Turquoise
+        case "reflection": return "#A4C3A2" // Sage
+        case "story": return "#FFD166"     // Yellow
+        default: return "#f4e06d"          // Mustard
         }
     }
 }

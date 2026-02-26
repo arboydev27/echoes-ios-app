@@ -8,6 +8,7 @@ struct FinalizeEchoSheet: View {
     
     var prompt: Prompt?
     var audioURL: URL?
+    var transcript: String?
     var onSave: () -> Void
     
     @State private var title: String = ""
@@ -17,9 +18,10 @@ struct FinalizeEchoSheet: View {
     @State private var showCamera = false
     @State private var showPhotosPicker = false
     
-    init(prompt: Prompt? = nil, audioURL: URL? = nil, onSave: @escaping () -> Void) {
+    init(prompt: Prompt? = nil, audioURL: URL? = nil, transcript: String? = nil, onSave: @escaping () -> Void) {
         self.prompt = prompt
         self.audioURL = audioURL
+        self.transcript = transcript
         self.onSave = onSave
         _title = State(initialValue: prompt?.text ?? "")
     }
@@ -130,10 +132,15 @@ struct FinalizeEchoSheet: View {
     }
     
     private func saveEcho() {
+        // Theme prediction! Use the transcript, fallback to prompt text if empty.
+        let textToAnalyze = transcript ?? prompt?.text ?? ""
+        let predictedTheme = ThemeAnalyzerService.shared.predictTheme(from: textToAnalyze)
+        
         let newEcho = EchoCard(
             title: title.isEmpty ? (prompt?.text ?? "Untitled Echo") : title,
-            category: prompt?.category ?? "General",
+            category: predictedTheme,
             audioFileName: audioURL?.lastPathComponent,
+            transcript: transcript,
             imageData: selectedImageData
         )
         
