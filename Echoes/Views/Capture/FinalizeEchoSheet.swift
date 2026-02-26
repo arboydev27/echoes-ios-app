@@ -9,6 +9,7 @@ struct FinalizeEchoSheet: View {
     var prompt: Prompt?
     var audioURL: URL?
     var transcript: String?
+    var joyPins: [TimeInterval]?
     var onSave: () -> Void
     
     @State private var title: String = ""
@@ -18,10 +19,11 @@ struct FinalizeEchoSheet: View {
     @State private var showCamera = false
     @State private var showPhotosPicker = false
     
-    init(prompt: Prompt? = nil, audioURL: URL? = nil, transcript: String? = nil, onSave: @escaping () -> Void) {
+    init(prompt: Prompt? = nil, audioURL: URL? = nil, transcript: String? = nil, joyPins: [TimeInterval]? = nil, onSave: @escaping () -> Void) {
         self.prompt = prompt
         self.audioURL = audioURL
         self.transcript = transcript
+        self.joyPins = joyPins
         self.onSave = onSave
         _title = State(initialValue: prompt?.text ?? "")
     }
@@ -141,7 +143,8 @@ struct FinalizeEchoSheet: View {
             category: predictedTheme,
             audioFileName: audioURL?.lastPathComponent,
             transcript: transcript,
-            imageData: selectedImageData
+            imageData: selectedImageData,
+            joyPins: joyPins
         )
         
         modelContext.insert(newEcho)

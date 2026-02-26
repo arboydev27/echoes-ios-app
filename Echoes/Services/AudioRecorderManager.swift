@@ -5,6 +5,7 @@ import AVFoundation
 final class AudioRecorderManager: NSObject, AVAudioRecorderDelegate {
     var isRecording = false
     var decibelLevel: Double = -60.0
+    var currentTime: TimeInterval = 0.0
     
     private var audioRecorder: AVAudioRecorder?
     private var timer: Timer?
@@ -46,6 +47,7 @@ final class AudioRecorderManager: NSObject, AVAudioRecorderDelegate {
             audioRecorder?.record()
             
             isRecording = true
+            currentTime = 0.0
             startMetering()
         } catch {
             print("Failed to start recording: \(error)")
@@ -67,6 +69,7 @@ final class AudioRecorderManager: NSObject, AVAudioRecorderDelegate {
             recorder.updateMeters()
             let power = recorder.averagePower(forChannel: 0)
             self.decibelLevel = Double(power)
+            self.currentTime = recorder.currentTime
         }
     }
     

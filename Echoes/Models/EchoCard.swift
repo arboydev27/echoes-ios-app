@@ -12,6 +12,7 @@ final class EchoCard {
     var location: String?
     var imageName: String?
     @Attribute(.externalStorage) var imageData: Data?
+    var joyPins: [Double]?
     
     init(
         id: UUID = UUID(),
@@ -22,7 +23,8 @@ final class EchoCard {
         transcript: String? = nil,
         location: String? = nil,
         imageName: String? = nil,
-        imageData: Data? = nil
+        imageData: Data? = nil,
+        joyPins: [Double]? = nil
     ) {
         self.id = id
         self.title = title
@@ -33,6 +35,7 @@ final class EchoCard {
         self.location = location
         self.imageName = imageName
         self.imageData = imageData
+        self.joyPins = joyPins
     }
     
     // Helper to get category color

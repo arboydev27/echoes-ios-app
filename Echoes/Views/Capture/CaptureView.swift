@@ -13,6 +13,12 @@ struct CaptureView: View {
     @State private var showSavedToast = false
     @State private var showFinalizeSheet = false
     @State private var recordedAudioURL: URL? = nil
+    
+    // Core Services
+    @State private var audioManager = AudioRecorderManager()
+    @State private var cameraService = CameraStreamService()
+    @State private var faceTracking = FaceTrackingService()
+    
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     init(prompt: Prompt? = nil, startImmediately: Bool = true) {
@@ -160,8 +166,12 @@ struct CaptureView: View {
                         withAnimation {
                             isRecording = false
                             hasStarted = false
-                            // In a real app, we'd get the actual URL here
-                            recordedAudioURL = URL(string: "file:///tmp/echo.m4a") 
+                            cameraService.stopSession()
+                            if let url = audioManager.stopRecording() {
+                                recordedAudioURL = url
+                            } else {
+                                recordedAudioURL = URL(string: "file:///tmp/echo.m4a")
+                            }
                             showFinalizeSheet = true
                         }
                     }
@@ -226,7 +236,7 @@ struct CaptureView: View {
         }
         .background(Color.neoBackground.ignoresSafeArea())
         .sheet(isPresented: $showFinalizeSheet) {
-            FinalizeEchoSheet(prompt: prompt, audioURL: recordedAudioURL) {
+            FinalizeEchoSheet(prompt: prompt, audioURL: recordedAudioURL, joyPins: faceTracking.joyPins) {
                 // When saved, reset local state and show toast
                 timeElapsed = 0
                 countdown = 3
@@ -243,6 +253,11 @@ struct CaptureView: View {
             .presentationDetents([.medium])
         }
         .onAppear {
+            faceTracking.attach(audioManager: audioManager)
+            cameraService.onFrameGenerated = { buffer in
+                faceTracking.process(sampleBuffer: buffer)
+            }
+            
             if hasStarted {
                 startCaptureSequence()
             }
@@ -258,6 +273,8 @@ struct CaptureView: View {
         if !enableCountdown {
             countdown = 0
             isRecording = true
+            audioManager.startRecording()
+            cameraService.startSession()
             return
         }
         
@@ -272,6 +289,8 @@ struct CaptureView: View {
                     }
                     if countdown == 0 {
                         isRecording = true
+                        audioManager.startRecording()
+                        cameraService.startSession()
                     }
                 }
             }
