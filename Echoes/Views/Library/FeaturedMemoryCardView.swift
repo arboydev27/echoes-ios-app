@@ -3,20 +3,15 @@ import SwiftUI
 struct FeaturedMemoryCardView: View {
     let echo: EchoCard
     
-    // For randomizing a mock duration if none exists in model
-    // Just for visual parity with the provided design sample
-    private let mockDuration = "00:11.84" 
-    
     var body: some View {
-        VStack(spacing: 0) {
-            // Top Image Area
+        ZStack(alignment: .bottom) {
+            // Full Background Image Area
             ZStack {
                 // Background color if no image
                 Color(hex: echo.categoryColorHex).opacity(0.8)
                 
                 // Placeholder for actual image
                 if let imageName = echo.imageName, !imageName.isEmpty {
-                    // Assuming we have an Image accessible by name, or use AsyncImage if URL
                     Image(imageName)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
@@ -26,9 +21,7 @@ struct FeaturedMemoryCardView: View {
                         .foregroundColor(.white.opacity(0.5))
                 }
             }
-            // Clip to rect so image doesn't overflow
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .clipped()
             
             // Bottom Info Area
             VStack(alignment: .leading, spacing: 8) {
@@ -40,35 +33,31 @@ struct FeaturedMemoryCardView: View {
                 Text(echo.date.formatted(date: .abbreviated, time: .shortened))
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.white.opacity(0.8))
-                
-                HStack {
-                    Image(systemName: "clock")
-                        .font(.system(size: 14, weight: .bold))
-                    Text(mockDuration)
-                        .font(.system(size: 14, weight: .bold))
-                    
-                    Spacer()
-                    
-                    Image(systemName: "text.bubble.fill")
-                        .font(.system(size: 20))
-                }
-                .foregroundColor(.white)
-                .padding(.top, 8)
             }
-            .padding(20)
-            .background(Color(hex: "#8C6D53")) // Warm brown from design
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .padding(.bottom, 24)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    // Apply dark color scheme to material to help white text contrast against bright images
+                    .environment(\.colorScheme, .dark) 
+            )
+            .fixedSize(horizontal: false, vertical: true) // Force it to consume needed height
         }
-        .frame(height: 480) // Fixed height for hero card
-        .cornerRadius(32) // Very generous rounding like the sample
+        .frame(height: 380) // Reduced height for the hero card
+        .cornerRadius(24) // Slightly tighter corners for smaller card
         .overlay(
-            RoundedRectangle(cornerRadius: 32)
+            RoundedRectangle(cornerRadius: 24)
                 .stroke(Color.white, lineWidth: 6) // Thick white border
         )
         // Add neo-retro outer shadow
         .compositingGroup()
         .shadow(color: .black.opacity(0.8), radius: 0, x: 4, y: 6)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 16)
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+        .padding(.bottom, 40) // Extra padding for the TabView dots to sit within the frame
     }
 }
 

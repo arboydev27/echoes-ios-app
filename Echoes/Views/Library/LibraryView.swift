@@ -105,16 +105,29 @@ struct LibraryView: View {
                                 let remainingEchoes = Array(filteredEchoes.dropFirst(featuredCount))
                                 
                                 if !featuredEchoes.isEmpty {
-                                    TabView {
-                                        ForEach(featuredEchoes) { echo in
-                                            NavigationLink(destination: Text("Connection view for \(echo.title)")) {
-                                                FeaturedMemoryCardView(echo: echo)
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Text("Featured Echoes")
+                                            .font(.system(size: 20, weight: .bold))
+                                            .foregroundColor(.neoCharcoal)
+                                            .padding(.horizontal)
+                                            .padding(.top, 8)
+                                        
+                                        TabView {
+                                            ForEach(featuredEchoes) { echo in
+                                                NavigationLink(destination: Text("Connection view for \(echo.title)")) {
+                                                    FeaturedMemoryCardView(echo: echo)
+                                                }
+                                                .buttonStyle(PlainButtonStyle())
                                             }
-                                            .buttonStyle(PlainButtonStyle())
+                                        }
+                                        // Use index display mode but add padding internally to card so dots fall below it
+                                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+                                        .frame(height: 440) // Adjusted height
+                                        .onAppear {
+                                            UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(Color.neoInk)
+                                            UIPageControl.appearance().pageIndicatorTintColor = UIColor(Color.neoPrimary)
                                         }
                                     }
-                                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-                                    .frame(height: 520) // Height of card + dots
                                 }
                                 
                                 if !remainingEchoes.isEmpty {
