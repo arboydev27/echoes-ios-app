@@ -7,18 +7,19 @@ struct FeaturedMemoryCardView: View {
         ZStack(alignment: .bottom) {
             // Full Background Image Area
             ZStack {
-                // Background color if no image
+                // Background color
                 Color(hex: echo.categoryColorHex).opacity(0.8)
                 
-                // Placeholder for actual image
+                // Always render the placeholder behind the image in case the asset is missing
+                Image(systemName: "photo.on.rectangle.angled")
+                    .font(.system(size: 80))
+                    .foregroundColor(.neoCharcoal.opacity(0.3))
+                
+                // Try rendering the actual image over it
                 if let imageName = echo.imageName, !imageName.isEmpty {
                     Image(imageName)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                } else {
-                    Image(systemName: "photo.fill")
-                        .font(.system(size: 80))
-                        .foregroundColor(.white.opacity(0.5))
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -55,9 +56,7 @@ struct FeaturedMemoryCardView: View {
         // Add neo-retro outer shadow
         .compositingGroup()
         .shadow(color: .black.opacity(0.8), radius: 0, x: 4, y: 6)
-        .padding(.horizontal, 16)
-        .padding(.top, 8)
-        .padding(.bottom, 40) // Extra padding for the TabView dots to sit within the frame
+        .padding(.vertical, 12)
     }
 }
 

@@ -7,6 +7,7 @@ struct LibraryView: View {
     @State private var searchText = ""
     @State private var selectedFilter: String? = nil
     @State private var showSettings = false
+    @State private var currentFeaturedEchoID: UUID?
     
     let filters = ["Childhood", "Romance", "Travel", "Family", "Home"]
     
@@ -112,20 +113,40 @@ struct LibraryView: View {
                                             .padding(.horizontal)
                                             .padding(.top, 8)
                                         
-                                        TabView {
-                                            ForEach(featuredEchoes) { echo in
-                                                NavigationLink(destination: Text("Connection view for \(echo.title)")) {
-                                                    FeaturedMemoryCardView(echo: echo)
+                                        ScrollView(.horizontal, showsIndicators: false) {
+                                            LazyHStack(spacing: 20) {
+                                                ForEach(featuredEchoes) { echo in
+                                                    NavigationLink(destination: Text("Connection view for \(echo.title)")) {
+                                                        FeaturedMemoryCardView(echo: echo)
+                                                    }
+                                                    .buttonStyle(PlainButtonStyle())
+                                                    .containerRelativeFrame(.horizontal)
                                                 }
-                                                .buttonStyle(PlainButtonStyle())
+                                            }
+                                            .scrollTargetLayout()
+                                        }
+                                        .scrollTargetBehavior(.viewAligned)
+                                        .safeAreaPadding(.horizontal, 32)
+                                        .scrollPosition(id: $currentFeaturedEchoID)
+                                        .onAppear {
+                                            if currentFeaturedEchoID == nil {
+                                                currentFeaturedEchoID = featuredEchoes.first?.id
                                             }
                                         }
-                                        // Use index display mode but add padding internally to card so dots fall below it
-                                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-                                        .frame(height: 440) // Adjusted height
-                                        .onAppear {
-                                            UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(Color.neoInk)
-                                            UIPageControl.appearance().pageIndicatorTintColor = UIColor(Color.neoPrimary)
+                                        
+                                        // Custom Paging Dots
+                                        if featuredEchoes.count > 1 {
+                                            HStack(spacing: 8) {
+                                                ForEach(featuredEchoes) { echo in
+                                                    Circle()
+                                                        .fill(currentFeaturedEchoID == echo.id ? Color.neoInk : Color.neoPrimary)
+                                                        .frame(width: 8, height: 8)
+                                                        .animation(.easeInOut(duration: 0.2), value: currentFeaturedEchoID)
+                                                }
+                                            }
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.top, 16)
+                                            .padding(.bottom, 8)
                                         }
                                     }
                                 }
