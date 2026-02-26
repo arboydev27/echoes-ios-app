@@ -62,8 +62,13 @@ final class CaptureSessionManager {
     
     // MARK: - Sequence Methods
     
-    func startSequence() {
+    func startSequence(withCountdown: Bool = true) {
         guard state == .idle || state == .error("") else { return }
+        
+        if !withCountdown {
+            beginRecording()
+            return
+        }
         
         state = .countdown
         countdown = 3

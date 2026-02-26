@@ -159,7 +159,7 @@ struct CaptureView: View {
                                 let granted = await sessionManager.requestAllPermissions()
                                 guard granted else { return }
                             }
-                            sessionManager.startSequence()
+                            sessionManager.startSequence(withCountdown: enableCountdown)
                         }
                     } else if sessionManager.state == .recording {
                         // Handle stop and process
@@ -256,7 +256,7 @@ struct CaptureView: View {
                 Task {
                     let permissionsGranted = await sessionManager.requestAllPermissions()
                     if permissionsGranted {
-                        sessionManager.startSequence()
+                        sessionManager.startSequence(withCountdown: enableCountdown)
                     }
                 }
             }
