@@ -1,25 +1,24 @@
 import SwiftUI
 
 struct TranscriptView: View {
+    var transcript: String
+    
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 24) {
-                TranscriptBubble(speaker: "Grandma", text: "You know, back then, we didn't have all these fancy gadgets. We had time. Real, uninterrupted time.")
-                
-                TranscriptBubble(speaker: "", text: "We used to sit on the porch for hours, just watching the cars go by, guessing where people were going. It sounds boring now, I suppose, but it was peaceful.")
-                
-                // Active Segment
-                ActiveTranscriptBubble(
-                    text: "It was the first time I ever saw the ocean, and it felt like the world just opened up. I remember the smell of the salt air hitting my face before I even saw the water."
-                )
-                
-                TranscriptBubble(speaker: "", text: "Your grandfather held my hand so tight, like he was afraid I'd blow away. He wasn't much for swimming, but he loved the sound of the waves.")
-                
-                TranscriptBubble(speaker: "Me", text: "Was that the trip where you bought the old station wagon?")
-                
-                TranscriptBubble(speaker: "Grandma", text: "Oh yes! That old rust bucket. It broke down three times on the way there, can you believe it?")
-                
-                TranscriptBubble(speaker: "", text: "We spent more time on the side of the road than on the beach that first day. But we laughed about it. We just laughed.")
+                if transcript.isEmpty {
+                    Text("No transcript available for this echo.")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.neoCharcoal.opacity(0.5))
+                        .italic()
+                        .padding(.top, 40)
+                } else {
+                    let segments = parseTranscript(transcript)
+                    ForEach(0..<segments.count, id: \.self) { index in
+                        let segment = segments[index]
+                        TranscriptBubble(speaker: segment.speaker, text: segment.text)
+                    }
+                }
                 
                 Spacer().frame(height: 100)
             }
@@ -36,6 +35,29 @@ struct TranscriptView: View {
             }
             .allowsHitTesting(false)
         )
+    }
+    
+    private struct TranscriptSegment {
+        let speaker: String
+        let text: String
+    }
+    
+    private func parseTranscript(_ text: String) -> [TranscriptSegment] {
+        // Simple parser for "Speaker: Message" or fallback to one big segment
+        let lines = text.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+        
+        var segments: [TranscriptSegment] = []
+        for line in lines {
+            if let colonIndex = line.firstIndex(of: ":") {
+                let speaker = String(line[..<colonIndex]).trimmingCharacters(in: .whitespaces)
+                let message = String(line[line.index(after: colonIndex)...]).trimmingCharacters(in: .whitespaces)
+                segments.append(TranscriptSegment(speaker: speaker, text: message))
+            } else {
+                segments.append(TranscriptSegment(speaker: "", text: line))
+            }
+        }
+        
+        return segments.isEmpty ? [TranscriptSegment(speaker: "", text: text)] : segments
     }
 }
 

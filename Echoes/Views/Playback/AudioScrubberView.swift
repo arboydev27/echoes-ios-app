@@ -1,17 +1,20 @@
 import SwiftUI
 
 struct AudioScrubberView: View {
-    @State private var progress: CGFloat = 0.35
-    let joyPins: [CGFloat] = [0.2, 0.65, 0.82] // percentages
+    @Binding var progress: Double
+    var currentTime: String
+    var totalTime: String
+    var joyPins: [Double] = [] // percentages
+    var onSeek: (Double) -> Void
     
     var body: some View {
         VStack(spacing: 12) {
             HStack {
-                Text("04:12") // Current time
+                Text(currentTime) // Current time
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(.neoCharcoal)
                 Spacer()
-                Text("12:30") // Total time
+                Text(totalTime) // Total time
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(.neoCharcoal.opacity(0.6))
             }
@@ -51,8 +54,11 @@ struct AudioScrubberView: View {
                         .gesture(
                             DragGesture()
                                 .onChanged { value in
-                                    let newProgress = value.location.x / geo.size.width
-                                    progress = min(max(newProgress, 0), 1)
+                                    let newProgress = Double(value.location.x / geo.size.width)
+                                    progress = min(max(newProgress, 0.0), 1.0)
+                                }
+                                .onEnded { value in
+                                    onSeek(progress)
                                 }
                         )
                 }

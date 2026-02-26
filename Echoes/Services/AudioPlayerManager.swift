@@ -60,6 +60,21 @@ final class AudioPlayerManager: NSObject, AVAudioPlayerDelegate {
         stopTimers()
     }
     
+    func seek(to time: TimeInterval) {
+        audioPlayer?.currentTime = time
+        self.currentTime = time
+    }
+    
+    func skipForward() {
+        let newTime = min((audioPlayer?.currentTime ?? 0) + 10, duration)
+        seek(to: newTime)
+    }
+    
+    func skipBackward() {
+        let newTime = max((audioPlayer?.currentTime ?? 0) - 10, 0)
+        seek(to: newTime)
+    }
+    
     private func startTimers() {
         playbackTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             guard let self = self, let player = self.audioPlayer, player.isPlaying else { return }

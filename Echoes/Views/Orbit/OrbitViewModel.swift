@@ -8,8 +8,8 @@ class OrbitViewModel {
     var currentStreak: Int = 0
     var topicMix: [String: Int] = [:]
     
-    // We can calculate stats from a given array of EchoCards
-    func calculateStats(from cards: [EchoCard]) {
+    // We can calculate stats from a given array of Echo objects
+    func calculateStats(from cards: [Echo]) {
         totalMemories = cards.count
         // Mock 1.5 hours per memory card for now
         totalHours = Double(cards.count) * 1.5
@@ -17,7 +17,7 @@ class OrbitViewModel {
         // Topic Mix
         var mix: [String: Int] = [:]
         for card in cards {
-            mix[card.category, default: 0] += 1
+            mix[card.themeTag, default: 0] += 1
         }
         topicMix = mix
         

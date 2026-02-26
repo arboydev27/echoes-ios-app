@@ -12,7 +12,6 @@ import SwiftData
 struct EchoesApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            EchoCard.self,
             Echo.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
@@ -24,15 +23,15 @@ struct EchoesApp: App {
             // Synchronous deep wipe and reset for debugging
             Task { @MainActor in
                 do {
-                    try container.mainContext.delete(model: EchoCard.self)
+                    try container.mainContext.delete(model: Echo.self)
                     
-                    let sample1 = EchoCard(title: "The Summer of '65", date: Date().addingTimeInterval(-86400 * 1), category: "Childhood", imageName: "dummy_image_1")
-                    let sample2 = EchoCard(title: "First Date at the Diner", date: Date().addingTimeInterval(-86400 * 2), category: "Romance", imageName: "dummy_image_2")
-                    let sample3 = EchoCard(title: "Trip to Paris 1980", date: Date().addingTimeInterval(-86400 * 3), category: "Travel", imageName: "dummy_image_3")
-                    let sample4 = EchoCard(title: "Holiday at the Cabin", date: Date().addingTimeInterval(-86400 * 4), category: "Family", imageName: "dummy_image_4")
-                    let sample5 = EchoCard(title: "Graduation Day", date: Date().addingTimeInterval(-86400 * 5), category: "Childhood", imageName: "dummy_image_5")
-                    let sample6 = EchoCard(title: "New Puppy Arrival", date: Date().addingTimeInterval(-86400 * 6), category: "Home", imageName: "dummy_image_6")
-                    let sample7 = EchoCard(title: "Cross Country Roadtrip", date: Date().addingTimeInterval(-86400 * 7), category: "Travel", imageName: "dummy_image_7")
+                    let sample1 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 1), title: "The Summer of '65", promptText: "Mock", duration: 60, transcript: "Mock", themeTag: "Childhood", audioFilename: "mock.m4a", coverImageFilename: "dummy_image_1")
+                    let sample2 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 2), title: "First Date at the Diner", promptText: "Mock", duration: 60, transcript: "Mock", themeTag: "Romance", audioFilename: "mock.m4a", coverImageFilename: "dummy_image_2")
+                    let sample3 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 3), title: "Trip to Paris 1980", promptText: "Mock", duration: 60, transcript: "Mock", themeTag: "Travel", audioFilename: "mock.m4a", coverImageFilename: "dummy_image_3")
+                    let sample4 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 4), title: "Holiday at the Cabin", promptText: "Mock", duration: 60, transcript: "Mock", themeTag: "Family", audioFilename: "mock.m4a", coverImageFilename: "dummy_image_4")
+                    let sample5 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 5), title: "Graduation Day", promptText: "Mock", duration: 60, transcript: "Mock", themeTag: "Childhood", audioFilename: "mock.m4a", coverImageFilename: "dummy_image_5")
+                    let sample6 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 6), title: "New Puppy Arrival", promptText: "Mock", duration: 60, transcript: "Mock", themeTag: "Home", audioFilename: "mock.m4a", coverImageFilename: "dummy_image_6")
+                    let sample7 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 7), title: "Cross Country Roadtrip", promptText: "Mock", duration: 60, transcript: "Mock", themeTag: "Travel", audioFilename: "mock.m4a", coverImageFilename: "dummy_image_7")
                     
                     container.mainContext.insert(sample1)
                     container.mainContext.insert(sample2)

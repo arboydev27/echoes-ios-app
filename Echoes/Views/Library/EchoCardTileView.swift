@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct EchoCardTileView: View {
-    let echo: EchoCard
+    let echo: Echo
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -15,18 +15,21 @@ struct EchoCardTileView: View {
                     .foregroundColor(.neoCharcoal.opacity(0.3))
                 
                 // Actual image
-                if let imageName = echo.imageName, !imageName.isEmpty {
-                    Image(imageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                        .clipped()
-                } else if let imageData = echo.imageData, let uiImage = UIImage(data: imageData) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                        .clipped()
+                if let filename = echo.coverImageFilename, !filename.isEmpty {
+                    if filename.hasPrefix("dummy_") {
+                        Image(filename)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                            .clipped()
+                    } else if let url = StorageManager.shared.getCoverImageURL(filename: filename),
+                              let uiImage = UIImage(contentsOfFile: url.path) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                            .clipped()
+                    }
                 }
             }
             .frame(maxWidth: .infinity)
@@ -41,7 +44,7 @@ struct EchoCardTileView: View {
                 .padding(.top, 8)
             
             VStack(alignment: .leading, spacing: 8) {
-                Text(echo.category.uppercased())
+                Text(echo.themeTag.uppercased())
                     .font(.system(size: 10, weight: .heavy))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -64,7 +67,7 @@ struct EchoCardTileView: View {
                 
                 Spacer(minLength: 4)
                 
-                Text(echo.date.formatted(date: .abbreviated, time: .omitted))
+                Text(echo.dateRecorded.formatted(date: .abbreviated, time: .omitted))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.neoCharcoal.opacity(0.6))
             }

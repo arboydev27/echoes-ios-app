@@ -201,7 +201,7 @@ struct SettingsView: View {
                     Button("Cancel", role: .cancel) { }
                     Button("Delete", role: .destructive) {
                         do {
-                            try modelContext.delete(model: EchoCard.self)
+                            try modelContext.delete(model: Echo.self)
                         } catch {
                             print("Error clearing data: \(error)")
                         }

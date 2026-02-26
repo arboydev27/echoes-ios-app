@@ -3,7 +3,7 @@ import SwiftData
 
 struct OrbitView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var echoCards: [EchoCard]
+    @Query private var echoes: [Echo]
     
     @State private var viewModel = OrbitViewModel()
     @State private var showSettings = false
@@ -64,10 +64,10 @@ struct OrbitView: View {
             .onAppear {
                 // Animate changes or just calculate normally
                 withAnimation(.spring()) {
-                    viewModel.calculateStats(from: echoCards)
+                    viewModel.calculateStats(from: echoes)
                 }
             }
-            .onChange(of: echoCards) { _, newCards in
+            .onChange(of: echoes) { _, newCards in
                 withAnimation(.spring()) {
                     viewModel.calculateStats(from: newCards)
                 }
@@ -81,5 +81,5 @@ struct OrbitView: View {
 
 #Preview {
     OrbitView()
-        .modelContainer(for: EchoCard.self, inMemory: true)
+        .modelContainer(for: Echo.self, inMemory: true)
 }

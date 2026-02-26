@@ -3,7 +3,7 @@ import SwiftData
 
 struct LibraryView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \EchoCard.date, order: .reverse) private var echoes: [EchoCard]
+    @Query(sort: \Echo.dateRecorded, order: .reverse) private var echoes: [Echo]
     @State private var searchText = ""
     @State private var selectedFilter: String? = nil
     @State private var showSettings = false
@@ -11,10 +11,10 @@ struct LibraryView: View {
     
     let filters = ["Childhood", "Romance", "Travel", "Family", "Home"]
     
-    var filteredEchoes: [EchoCard] {
+    var filteredEchoes: [Echo] {
         echoes.filter { echo in
             let matchesSearch = searchText.isEmpty || echo.title.localizedCaseInsensitiveContains(searchText)
-            let matchesFilter = selectedFilter == nil || echo.category.localizedCaseInsensitiveCompare(selectedFilter!) == .orderedSame
+            let matchesFilter = selectedFilter == nil || echo.themeTag.localizedCaseInsensitiveCompare(selectedFilter!) == .orderedSame
             return matchesSearch && matchesFilter
         }
     }
@@ -116,7 +116,7 @@ struct LibraryView: View {
                                         ScrollView(.horizontal, showsIndicators: false) {
                                             LazyHStack(spacing: 20) {
                                                 ForEach(featuredEchoes) { echo in
-                                                    NavigationLink(destination: Text("Connection view for \(echo.title)")) {
+                                                    NavigationLink(destination: ConnectionPlaybackView(echo: echo)) {
                                                         FeaturedMemoryCardView(echo: echo)
                                                     }
                                                     .buttonStyle(PlainButtonStyle())

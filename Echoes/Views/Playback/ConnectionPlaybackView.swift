@@ -1,8 +1,10 @@
 import SwiftUI
 
 struct ConnectionPlaybackView: View {
-    let echo: EchoCard
+    let echo: Echo
     @Environment(\.dismiss) var dismiss
+    @State private var player = AudioPlayerManager()
+    @State private var scrubberProgress: Double = 0.0
     
     var body: some View {
         VStack(spacing: 0) {
@@ -47,12 +49,21 @@ struct ConnectionPlaybackView: View {
                             .foregroundColor(.neoCharcoal.opacity(0.3))
                         
                         // Actual image
-                        if let imageName = echo.imageName, !imageName.isEmpty {
-                            Image(imageName)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                                .clipped()
+                        if let filename = echo.coverImageFilename, !filename.isEmpty {
+                            if filename.hasPrefix("dummy_") {
+                                Image(filename)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                                    .clipped()
+                            } else if let url = StorageManager.shared.getCoverImageURL(filename: filename),
+                                      let uiImage = UIImage(contentsOfFile: url.path) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                                    .clipped()
+                            }
                         }
                     }
                     .frame(height: 180)
@@ -67,7 +78,7 @@ struct ConnectionPlaybackView: View {
                                 .foregroundColor(.neoCharcoal)
                                 .lineLimit(1)
                             
-                            Text("\(echo.date.formatted(date: .abbreviated, time: .omitted)) • \(echo.category.uppercased())")
+                            Text("\(echo.dateRecorded.formatted(date: .abbreviated, time: .omitted)) • \(echo.themeTag.uppercased())")
                                 .font(.system(size: 10, weight: .bold))
                                 .foregroundColor(.neoCharcoal.opacity(0.6))
                         }
@@ -99,24 +110,42 @@ struct ConnectionPlaybackView: View {
                 .padding(.horizontal, 20)
                 
                 // Scrubber
-                AudioScrubberView()
-                    .padding(.horizontal, 24)
+                AudioScrubberView(
+                    progress: $scrubberProgress,
+                    currentTime: echo.formattedTime(player.currentTime),
+                    totalTime: echo.formattedDuration,
+                    joyPins: echo.joyPins.map { $0 / echo.duration },
+                    onSeek: { newProgress in
+                        player.seek(to: newProgress * echo.duration)
+                    }
+                )
+                .padding(.horizontal, 24)
+                .onChange(of: player.currentTime) { _, newValue in
+                    // Only update scrubber from player if not being dragged
+                    scrubberProgress = newValue / echo.duration
+                }
                 
                 // Playback Controls
                 HStack(spacing: 40) {
-                    Button(action: {}) {
+                    Button(action: { player.skipBackward() }) {
                         Image(systemName: "gobackward.10")
                             .font(.system(size: 28))
                             .foregroundColor(.neoCharcoal.opacity(0.6))
                     }
                     
-                    Button(action: {}) {
-                        Image(systemName: "pause.fill")
+                    Button(action: {
+                        if player.isPlaying {
+                            player.pause()
+                        } else {
+                            player.play()
+                        }
+                    }) {
+                        Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
                             .font(.system(size: 32))
                     }
                     .buttonStyle(NeoRetroIconButtonStyle(backgroundColor: .neoPrimary, foregroundColor: .white, size: 72))
                     
-                    Button(action: {}) {
+                    Button(action: { player.skipForward() }) {
                         Image(systemName: "goforward.10")
                             .font(.system(size: 28))
                             .foregroundColor(.neoCharcoal.opacity(0.6))
@@ -130,10 +159,18 @@ struct ConnectionPlaybackView: View {
                 .background(Color.neoCharcoal.opacity(0.2))
             
             // Transcript View extending to bottom with mask
-            TranscriptView()
+            TranscriptView(transcript: echo.transcript)
                 .background(Color.neoBackground)
         }
         .background(Color.neoBackground.ignoresSafeArea())
         .navigationBarHidden(true)
+        .onAppear {
+            if let url = StorageManager.shared.getAudioURL(filename: echo.audioFilename) {
+                player.loadAudio(url: url)
+            }
+        }
+        .onDisappear {
+            player.pause()
+        }
     }
 }

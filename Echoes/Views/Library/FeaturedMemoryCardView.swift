@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct FeaturedMemoryCardView: View {
-    let echo: EchoCard
+    let echo: Echo
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -16,18 +16,21 @@ struct FeaturedMemoryCardView: View {
                     .foregroundColor(.neoCharcoal.opacity(0.3))
                 
                 // Try rendering the actual image over it
-                if let imageName = echo.imageName, !imageName.isEmpty {
-                    Image(imageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                        .clipped()
-                } else if let imageData = echo.imageData, let uiImage = UIImage(data: imageData) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                        .clipped()
+                if let filename = echo.coverImageFilename, !filename.isEmpty {
+                    if filename.hasPrefix("dummy_") {
+                        Image(filename)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                            .clipped()
+                    } else if let url = StorageManager.shared.getCoverImageURL(filename: filename),
+                              let uiImage = UIImage(contentsOfFile: url.path) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                            .clipped()
+                    }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -41,7 +44,7 @@ struct FeaturedMemoryCardView: View {
                     .lineLimit(1)
                     .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
                 
-                Text(echo.date.formatted(date: .abbreviated, time: .shortened))
+                Text(echo.dateRecorded.formatted(date: .abbreviated, time: .shortened))
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.white.opacity(0.9))
                     .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
@@ -79,10 +82,13 @@ struct FeaturedMemoryCardView: View {
     ZStack {
         Color.black.ignoresSafeArea()
         
-        FeaturedMemoryCardView(echo: EchoCard(
+        FeaturedMemoryCardView(echo: Echo(
             title: "Hiking story",
-            date: Date(),
-            category: "Travel"
+            promptText: "Mock",
+            duration: 120,
+            transcript: "Mock transcript",
+            themeTag: "Travel",
+            audioFilename: ""
         ))
         .padding()
     }
