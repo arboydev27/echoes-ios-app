@@ -12,9 +12,9 @@ struct ConnectionPlaybackView: View {
             HStack {
                 Button(action: { dismiss() }) {
                     Image(systemName: "arrow.left")
-                        .font(.title3)
+                        .font(.title2)
+                        .foregroundColor(.neoCharcoal)
                 }
-                .buttonStyle(NeoRetroIconButtonStyle(size: 44))
                 
                 Spacer()
                 
@@ -25,11 +25,11 @@ struct ConnectionPlaybackView: View {
                 
                 Spacer()
                 
-                Button(action: {}) {
-                    Image(systemName: "ellipsis")
-                        .font(.title3)
+                Button("Cancel") {
+                    dismiss()
                 }
-                .buttonStyle(NeoRetroIconButtonStyle(size: 44))
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(.neoCharcoal)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
@@ -154,6 +154,7 @@ struct ConnectionPlaybackView: View {
                     }
                 }
             }
+            .padding(.top, 24)
             .padding(.bottom, 24)
             .background(Color.neoBackground)
             

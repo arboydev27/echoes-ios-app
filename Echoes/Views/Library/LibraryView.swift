@@ -8,6 +8,7 @@ struct LibraryView: View {
     @State private var selectedFilter: String? = nil
     @State private var showSettings = false
     @State private var currentFeaturedEchoID: UUID?
+    @State private var selectedPlaybackEcho: Echo? = nil
     
     let filters = ["Childhood", "Romance", "Travel", "Family", "Home"]
     
@@ -117,7 +118,9 @@ struct LibraryView: View {
                                         ScrollView(.horizontal, showsIndicators: false) {
                                             LazyHStack(spacing: 20) {
                                                 ForEach(featuredEchoes) { echo in
-                                                    NavigationLink(destination: ConnectionPlaybackView(echo: echo)) {
+                                                    Button(action: {
+                                                        selectedPlaybackEcho = echo
+                                                    }) {
                                                         FeaturedMemoryCardView(echo: echo)
                                                     }
                                                     .buttonStyle(PlainButtonStyle())
@@ -155,7 +158,9 @@ struct LibraryView: View {
                                 if !remainingEchoes.isEmpty {
                                     LazyVGrid(columns: columns, spacing: 16) {
                                         ForEach(remainingEchoes) { echo in
-                                            NavigationLink(destination: Text("Connection view for \(echo.title)")) {
+                                            Button(action: {
+                                                selectedPlaybackEcho = echo
+                                            }) {
                                                 EchoCardTileView(echo: echo)
                                             }
                                             .buttonStyle(PlainButtonStyle())
@@ -172,6 +177,9 @@ struct LibraryView: View {
         }
         .sheet(isPresented: $showSettings) {
             SettingsView()
+        }
+        .fullScreenCover(item: $selectedPlaybackEcho) { echo in
+            ConnectionPlaybackView(echo: echo)
         }
     }
         
