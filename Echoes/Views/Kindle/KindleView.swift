@@ -31,10 +31,12 @@ struct KindleView: View {
                     Spacer()
                     
                     Button(action: {}) {
-                        Image(systemName: "magnifyingglass")
+                        Image(systemName: "line.3.horizontal")
                             .font(.title3)
-                            .foregroundColor(.neoCharcoal)
+                            .foregroundColor(.clear)
                     }
+                    .disabled(true)
+
                 }
                 .padding()
                 
@@ -111,7 +113,7 @@ struct KindleView: View {
                     }
                 }
                 .frame(maxWidth: 380, maxHeight: 520)
-                .padding(.bottom, 20)
+                .padding(.bottom, 60)
                 
                 Spacer()
                 
