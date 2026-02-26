@@ -10,6 +10,7 @@ struct CaptureView: View {
     @State private var isRecording = false
     @State private var hasStarted: Bool
     @State private var timeElapsed: TimeInterval = 0
+    @State private var showSavedToast = false
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     init(prompt: Prompt? = nil, startImmediately: Bool = true) {
@@ -24,8 +25,9 @@ struct CaptureView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
+        ZStack(alignment: .top) {
+            VStack(spacing: 0) {
+                // Header
             HStack {
                 Button {
                     dismiss()
@@ -152,9 +154,20 @@ struct CaptureView: View {
                         }
                         startCaptureSequence()
                     } else {
-                        isRecording = false
-                        // Handle save and route to Connection screen
-                        dismiss()
+                        // Handle save and reset state
+                        withAnimation {
+                            isRecording = false
+                            hasStarted = false
+                            timeElapsed = 0
+                            countdown = 3
+                            showSavedToast = true
+                        }
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            withAnimation {
+                                showSavedToast = false
+                            }
+                        }
                     }
                 }) {
                     ZStack {
@@ -189,6 +202,28 @@ struct CaptureView: View {
                 .foregroundColor(.neoCharcoal.opacity(0.6))
                 .padding(.top, 24)
                 .padding(.bottom, 40)
+            }
+            
+            // Toast Notification
+            if showSavedToast {
+                HStack(spacing: 12) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.neoMint)
+                        .font(.title3)
+                    
+                    Text("Memory saved to Vault")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.white)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(Color.neoCharcoal)
+                .cornerRadius(24)
+                .shadow(color: .black.opacity(0.15), radius: 10, y: 5)
+                .padding(.top, 60)
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .zIndex(100)
+            }
         }
         .background(Color.neoBackground.ignoresSafeArea())
         .onAppear {
