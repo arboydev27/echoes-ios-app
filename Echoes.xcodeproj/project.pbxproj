@@ -267,7 +267,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Echoes/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Echoes uses the camera to privately detect smiles and capture joy during your stories. No video is ever saved or transmitted.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Echoes needs microphone access to record and preserve your family's stories and voices offline.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Echoes uses on-device speech recognition to privately transcribe your family stories into readable memory cards. Your voice data never leaves this device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -300,7 +302,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Echoes/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Echoes uses the camera to privately detect smiles and capture joy during your stories. No video is ever saved or transmitted.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Echoes needs microphone access to record and preserve your family's stories and voices offline.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Echoes uses on-device speech recognition to privately transcribe your family stories into readable memory cards. Your voice data never leaves this device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
