@@ -37,16 +37,28 @@ struct ConnectionPlaybackView: View {
             VStack(spacing: 24) {
                 // Simplified Memory Card
                 VStack(spacing: 0) {
-                    Rectangle()
-                        .fill(Color(hex: echo.categoryColorHex).opacity(0.3))
-                        .overlay(
-                            Image(systemName: "photo.on.rectangle.angled")
-                                .font(.system(size: 56))
-                                .foregroundColor(.neoCharcoal.opacity(0.3))
-                        )
-                        .frame(height: 180)
-                        .border(Color.neoCharcoal.opacity(0.2), width: 1)
-                        .padding(12)
+                    ZStack {
+                        Rectangle()
+                            .fill(Color(hex: echo.categoryColorHex).opacity(0.3))
+                        
+                        // Placeholder icon
+                        Image(systemName: "photo.on.rectangle.angled")
+                            .font(.system(size: 56))
+                            .foregroundColor(.neoCharcoal.opacity(0.3))
+                        
+                        // Actual image
+                        if let imageName = echo.imageName, !imageName.isEmpty {
+                            Image(imageName)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                                .clipped()
+                        }
+                    }
+                    .frame(height: 180)
+                    .clipped()
+                    .border(Color.neoCharcoal.opacity(0.2), width: 1)
+                    .padding(12)
                     
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {

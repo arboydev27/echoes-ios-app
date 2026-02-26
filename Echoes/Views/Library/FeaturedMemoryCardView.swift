@@ -20,9 +20,12 @@ struct FeaturedMemoryCardView: View {
                     Image(imageName)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .clipped()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .clipped()
             
             // Bottom Info Area
             VStack(alignment: .leading, spacing: 8) {
@@ -30,20 +33,25 @@ struct FeaturedMemoryCardView: View {
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.white)
                     .lineLimit(1)
+                    .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
                 
                 Text(echo.date.formatted(date: .abbreviated, time: .shortened))
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.8))
+                    .foregroundColor(.white.opacity(0.9))
+                    .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
+            .padding(.horizontal, 20)
+            .padding(.top, 40) // More space for the gradient
             .padding(.bottom, 24)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                Rectangle()
-                    .fill(.ultraThinMaterial)
-                    // Apply dark color scheme to material to help white text contrast against bright images
-                    .environment(\.colorScheme, .dark) 
+                LinearGradient(
+                    gradient: Gradient(colors: [.clear, .black.opacity(0.6)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .background(.ultraThinMaterial)
+                .environment(\.colorScheme, .dark)
             )
             .fixedSize(horizontal: false, vertical: true) // Force it to consume needed height
         }

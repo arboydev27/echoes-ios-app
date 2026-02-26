@@ -5,14 +5,27 @@ struct EchoCardTileView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Rectangle()
-                .fill(Color(hex: echo.categoryColorHex).opacity(0.4))
-                .overlay(
-                    Image(systemName: "photo.on.rectangle.angled")
-                        .font(.system(size: 40))
-                        .foregroundColor(.neoCharcoal.opacity(0.3))
-                )
-                .aspectRatio(1, contentMode: .fill)
+            ZStack {
+                Rectangle()
+                    .fill(Color(hex: echo.categoryColorHex).opacity(0.4))
+                
+                // Placeholder icon
+                Image(systemName: "photo.on.rectangle.angled")
+                    .font(.system(size: 40))
+                    .foregroundColor(.neoCharcoal.opacity(0.3))
+                
+                // Actual image
+                if let imageName = echo.imageName, !imageName.isEmpty {
+                    Image(imageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .clipped()
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .aspectRatio(1, contentMode: .fill)
+            .clipped()
                 .cornerRadius(12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
