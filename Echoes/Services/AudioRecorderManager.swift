@@ -4,6 +4,7 @@ import AVFoundation
 @Observable
 final class AudioRecorderManager: NSObject, AVAudioRecorderDelegate {
     var isRecording = false
+    var isPaused = false
     var decibelLevel: Double = -60.0
     var currentTime: TimeInterval = 0.0
     
@@ -49,7 +50,9 @@ final class AudioRecorderManager: NSObject, AVAudioRecorderDelegate {
             audioRecorder?.prepareToRecord()
             audioRecorder?.record()
             
+            
             isRecording = true
+            isPaused = false
             currentTime = 0.0
             startMetering()
         } catch {
@@ -59,9 +62,24 @@ final class AudioRecorderManager: NSObject, AVAudioRecorderDelegate {
         }
     }
     
+    func pauseRecording() {
+        guard isRecording, !isPaused else { return }
+        audioRecorder?.pause()
+        isPaused = true
+        stopMetering()
+    }
+    
+    func resumeRecording() {
+        guard isRecording, isPaused else { return }
+        audioRecorder?.record()
+        isPaused = false
+        startMetering()
+    }
+    
     func stopRecording() -> URL? {
         audioRecorder?.stop()
         isRecording = false
+        isPaused = false
         stopMetering()
         return tempURL
     }
@@ -84,6 +102,7 @@ final class AudioRecorderManager: NSObject, AVAudioRecorderDelegate {
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
         if !flag {
             isRecording = false
+            isPaused = false
             stopMetering()
             print("Recording finished unsuccessfully")
         }

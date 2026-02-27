@@ -55,6 +55,7 @@ struct CaptureView: View {
                         .fill(Color.red)
                         .frame(width: 8, height: 8)
                         .opacity(sessionManager.state == .recording ? (Int(timeElapsed) % 2 == 0 ? 1 : 0.3) : 1) // Pulse
+                        .opacity(sessionManager.state == .paused ? 0.3 : 1)
                     
                     Text(timeString)
                         .font(.system(size: 14, weight: .bold, design: .monospaced))
@@ -144,14 +145,22 @@ struct CaptureView: View {
             HStack(spacing: 32) {
                 // Pause Button
                 Button(action: {
-                    // Pause not yet supported by sessionManager state machine
+                    if sessionManager.state == .recording {
+                        withAnimation {
+                            sessionManager.pauseRecording()
+                        }
+                    } else if sessionManager.state == .paused {
+                        withAnimation {
+                            sessionManager.resumeRecording()
+                        }
+                    }
                 }) {
-                    Image(systemName: sessionManager.state == .recording ? "pause.fill" : "play.fill")
+                    Image(systemName: sessionManager.state == .paused ? "play.fill" : "pause.fill")
                         .font(.title2)
                 }
                 .buttonStyle(NeoRetroIconButtonStyle(size: 56))
                 .opacity(hasStarted ? 1.0 : 0.5)
-                .disabled(!hasStarted)
+                .disabled(!hasStarted || sessionManager.state == .processing || sessionManager.state == .finalizing)
                 
                 // Stop / Record Button
                 Button(action: {
@@ -164,7 +173,7 @@ struct CaptureView: View {
                             }
                             sessionManager.startSequence(withCountdown: enableCountdown, quality: recordingQuality)
                         }
-                    } else if sessionManager.state == .recording {
+                    } else if sessionManager.state == .recording || sessionManager.state == .paused {
                         // Handle stop and process
                         withAnimation {
                             sessionManager.stopAndProcessSequence()
@@ -209,7 +218,15 @@ struct CaptureView: View {
                 .disabled(sessionManager.state == .processing)
             }
             
-            Text(sessionManager.state == .processing ? "Processing Echo..." : (hasStarted ? "Tap square to finish" : "Tap mic to capture"))
+            let statusText: String = {
+                switch sessionManager.state {
+                case .processing: return "Processing Echo..."
+                case .paused: return "Recording Paused"
+                default: return hasStarted ? "Tap square to finish" : "Tap mic to capture"
+                }
+            }()
+            
+            Text(statusText)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.neoCharcoal.opacity(0.6))
                 .padding(.top, 24)

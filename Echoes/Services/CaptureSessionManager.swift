@@ -6,6 +6,7 @@ enum CaptureState: Equatable {
     case idle
     case countdown
     case recording
+    case paused
     case processing
     case finalizing
     case saved
@@ -111,8 +112,24 @@ final class CaptureSessionManager {
         audioManager.startRecording(quality: recordingQuality)
     }
     
-    func stopAndProcessSequence() {
+    func pauseRecording() {
         guard state == .recording else { return }
+        
+        state = .paused
+        audioManager.pauseRecording()
+        // Note: Camera feed is kept alive intentionally to avoid black screen, but audio recording is paused. 
+        // We could pause camera processing here too if needed for performance.
+    }
+    
+    func resumeRecording() {
+        guard state == .paused else { return }
+        
+        state = .recording
+        audioManager.resumeRecording()
+    }
+    
+    func stopAndProcessSequence() {
+        guard state == .recording || state == .paused else { return }
         
         state = .processing
         
