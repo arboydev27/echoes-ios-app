@@ -78,8 +78,22 @@ final class CameraStreamService: NSObject, AVCaptureVideoDataOutputSampleBufferD
         }
         
         // Ensure orientation if needed (typically handled by Vision automatically if configured, or default portrait)
-        if let connection = videoDataOutput.connection(with: .video), connection.isVideoOrientationSupported {
-            connection.videoOrientation = .portrait
+        if let connection = videoDataOutput.connection(with: .video) {
+            #if swift(>=5.9)
+            if #available(iOS 17.0, *) {
+                if connection.isVideoRotationAngleSupported(90) {
+                    connection.videoRotationAngle = 90
+                }
+            } else {
+                if connection.isVideoOrientationSupported {
+                    connection.videoOrientation = .portrait
+                }
+            }
+            #else
+            if connection.isVideoOrientationSupported {
+                connection.videoOrientation = .portrait
+            }
+            #endif
         }
         
         session.commitConfiguration()

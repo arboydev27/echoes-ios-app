@@ -119,7 +119,7 @@ struct FinalizeEchoSheet: View {
             .sheet(isPresented: $showCamera) {
                 CameraPicker(imageData: $selectedImageData)
             }
-            .onChange(of: selectedItem) { newItem in
+            .onChange(of: selectedItem) { _, newItem in
                 Task {
                     if let data = try? await newItem?.loadTransferable(type: Data.self) {
                         selectedImageData = data

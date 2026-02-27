@@ -36,7 +36,7 @@ final class CaptureSessionManager {
     func requestAllPermissions() async -> Bool {
         // Microphone
         let audioGranted = await withCheckedContinuation { continuation in
-            AVAudioSession.sharedInstance().requestRecordPermission { granted in
+            AVAudioApplication.requestRecordPermission { granted in
                 continuation.resume(returning: granted)
             }
         }
@@ -187,7 +187,7 @@ final class CaptureSessionManager {
             try? FileManager.default.removeItem(at: tempURL)
         }
         
-        audioManager.stopRecording() // safe to call if not recording
+        _ = audioManager.stopRecording() // safe to call if not recording
         cameraService.stopSession()
         faceTracker.reset()
         
