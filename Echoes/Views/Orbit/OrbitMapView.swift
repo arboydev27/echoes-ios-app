@@ -69,17 +69,17 @@ struct OrbitMapView: View {
                     .stroke(Color.neoCharcoal, style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
                     
                     // Center Node (You)
-                    OrbitNode(title: "You", iconName: "person.fill", isCentral: true, color: .neoPrimary)
+                    OrbitNode(title: "You", iconName: "person.fill", imageName: "you-image", isCentral: true, color: .neoPrimary)
                         .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     
                     // Grandpa
-                    OrbitNode(title: "Grandpa", iconName: "person.2.fill", color: .white)
+                    OrbitNode(title: "Grandpa", iconName: "person.2.fill", imageName: "grandpa-image", color: .white)
                         .position(x: geometry.size.width * 0.25, y: geometry.size.height * 0.25)
                         .offset(y: isAnimating ? -5 : 5)
                         .animation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true), value: isAnimating)
                     
                     // Mom
-                    OrbitNode(title: "Mom", iconName: "person.2.fill", color: .white)
+                    OrbitNode(title: "Mom", iconName: "person.2.fill", imageName: "mom-image", color: .white)
                         .position(x: geometry.size.width * 0.75, y: geometry.size.height * 0.3)
                         .offset(y: isAnimating ? 5 : -5)
                         .animation(.easeInOut(duration: 3.2).repeatForever(autoreverses: true), value: isAnimating)
@@ -102,27 +102,37 @@ struct OrbitMapView: View {
 struct OrbitNode: View {
     var title: String
     var iconName: String
+    var imageName: String? = nil
     var isCentral: Bool = false
     var color: Color
     var isGhost: Bool = false
     
     var body: some View {
+        let size: CGFloat = isCentral ? 64 : 48
+        
         VStack(spacing: 4) {
             ZStack {
                 Circle()
                     .fill(color)
-                    .frame(width: isCentral ? 64 : 48, height: isCentral ? 64 : 48)
-                    .overlay(
-                        Circle()
-                            .stroke(Color.neoCharcoal, lineWidth: 2)
-                    )
-                    .compositingGroup()
+                    .frame(width: size, height: size)
                     .shadow(color: .neoCharcoal, radius: 0, x: isCentral ? 4 : 2, y: isCentral ? 4 : 2)
                 
-                Image(systemName: iconName)
-                    .font(.system(size: isCentral ? 28 : 20, weight: .bold))
-                    .foregroundColor(isGhost ? .neoCharcoal.opacity(0.5) : .neoCharcoal)
+                if let imageName = imageName {
+                    Image(imageName)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: size, height: size)
+                        .clipShape(Circle())
+                } else {
+                    Image(systemName: iconName)
+                        .font(.system(size: isCentral ? 28 : 20, weight: .bold))
+                        .foregroundColor(isGhost ? .neoCharcoal.opacity(0.5) : .neoCharcoal)
+                }
             }
+            .overlay(
+                Circle()
+                    .stroke(Color.neoCharcoal, lineWidth: 2)
+            )
             .onTapGesture {
                 let impactHeavy = UIImpactFeedbackGenerator(style: .heavy)
                 impactHeavy.impactOccurred()
