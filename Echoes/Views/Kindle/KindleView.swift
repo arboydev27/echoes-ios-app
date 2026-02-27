@@ -8,6 +8,7 @@ struct KindleView: View {
     @State private var showCapture = false
     @State private var selectedPrompt: Prompt?
     @State private var showSettings = false
+    @State private var showSavedPrompts = false
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -30,12 +31,11 @@ struct KindleView: View {
                     
                     Spacer()
                     
-                    Button(action: {}) {
-                        Image(systemName: "line.3.horizontal")
+                    Button(action: { showSavedPrompts = true }) {
+                        Image(systemName: "bookmark")
                             .font(.title3)
-                            .foregroundColor(.clear)
+                            .foregroundColor(.neoCharcoal)
                     }
-                    .disabled(true)
 
                 }
                 .padding()
@@ -59,7 +59,11 @@ struct KindleView: View {
                 ZStack {
                     ForEach(Array(prompts.enumerated().reversed()), id: \.element.id) { index, prompt in
                         if index < 4 {
-                            PromptCardView(prompt: prompt)
+                            PromptCardView(prompt: prompt, onToggleSave: {
+                                if let i = prompts.firstIndex(where: { $0.id == prompt.id }) {
+                                    prompts[i].isSaved.toggle()
+                                }
+                            })
                                 .padding(.horizontal, cardPadding(index: index))
                                 .offset(cardOffset(index: index))
                                 .rotationEffect(.degrees(cardRotation(index: index)))
@@ -154,6 +158,9 @@ struct KindleView: View {
         }
         .sheet(isPresented: $showSettings) {
             SettingsView()
+        }
+        .sheet(isPresented: $showSavedPrompts) {
+            SavedPromptsView(prompts: $prompts)
         }
     }
     

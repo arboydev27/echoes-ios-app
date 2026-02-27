@@ -1,7 +1,9 @@
 import SwiftUI
+import SwiftData
 
 struct EchoCardTileView: View {
-    let echo: Echo
+    @Environment(\.modelContext) private var modelContext
+    @Bindable var echo: Echo
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -67,9 +69,22 @@ struct EchoCardTileView: View {
                 
                 Spacer(minLength: 4)
                 
-                Text(echo.dateRecorded.formatted(date: .abbreviated, time: .omitted))
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.neoCharcoal.opacity(0.6))
+                HStack {
+                    Text(echo.dateRecorded.formatted(date: .abbreviated, time: .omitted))
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.neoCharcoal.opacity(0.6))
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        echo.isFavorite.toggle()
+                        try? modelContext.save()
+                    }) {
+                        Image(systemName: echo.isFavorite ? "heart.fill" : "heart")
+                            .foregroundColor(echo.isFavorite ? .red : .neoCharcoal.opacity(0.6))
+                            .font(.system(size: 14))
+                    }
+                }
             }
             .padding(.horizontal, 10)
             .padding(.top, 12)

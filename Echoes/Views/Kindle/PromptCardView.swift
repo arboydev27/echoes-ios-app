@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PromptCardView: View {
     let prompt: Prompt
+    var onToggleSave: (() -> Void)? = nil
     
     var body: some View {
         VStack(spacing: 0) {
@@ -20,10 +21,12 @@ struct PromptCardView: View {
                 
                 Spacer()
                 
-                Button(action: {}) {
-                    Image(systemName: "bookmark")
+                Button(action: {
+                    onToggleSave?()
+                }) {
+                    Image(systemName: prompt.isSaved ? "heart.fill" : "heart")
                         .font(.title3)
-                        .foregroundColor(.neoCharcoal)
+                        .foregroundColor(prompt.isSaved ? .red : .neoCharcoal)
                 }
             }
             .padding(20)
@@ -72,10 +75,10 @@ struct PromptCardView: View {
                 
                 Spacer()
                 
-                // Save Pill
+                // Next Pill
                 Button(action: { /* Handled by drag gesture in parent */ }) {
                     HStack(spacing: 6) {
-                        Text("SAVE")
+                        Text("NEXT")
                             .font(.system(size: 14, weight: .bold))
                         Image(systemName: "hand.point.right.fill")
                             .font(.system(size: 14, weight: .bold))

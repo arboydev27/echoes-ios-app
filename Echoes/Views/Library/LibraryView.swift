@@ -13,6 +13,7 @@ struct LibraryView: View {
     @State private var currentFeaturedEchoID: UUID?
     @State private var selectedPlaybackEcho: Echo? = nil
     @State private var isUnlocked = false
+    @State private var showSavedEchoes = false
     
     let filters = ["Childhood", "Romance", "Travel", "Family", "Home"]
     
@@ -51,7 +52,11 @@ struct LibraryView: View {
                         
                         Spacer()
                         
-                        Color.clear.frame(width: 24, height: 24)
+                        Button(action: { showSavedEchoes = true }) {
+                            Image(systemName: "bookmark")
+                                .font(.title3)
+                                .foregroundColor(.neoCharcoal)
+                        }
                     }
                     .padding()
                     
@@ -65,6 +70,9 @@ struct LibraryView: View {
         }
         .sheet(isPresented: $showSettings) {
             SettingsView()
+        }
+        .sheet(isPresented: $showSavedEchoes) {
+            SavedEchoesView()
         }
         .fullScreenCover(item: $selectedPlaybackEcho) { echo in
             ConnectionPlaybackView(echo: echo)

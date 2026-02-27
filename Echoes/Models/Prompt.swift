@@ -7,6 +7,7 @@ struct Prompt: Identifiable {
     let category: String
     let icon: String
     var colorHex: String
+    var isSaved: Bool = false
 }
 
 extension Prompt {
