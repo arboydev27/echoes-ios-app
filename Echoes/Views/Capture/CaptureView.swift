@@ -272,8 +272,8 @@ struct CaptureView: View {
                         Text("Pivot Topic")
                             .font(.system(size: 24, weight: .black))
                             .foregroundColor(.neoCharcoal)
-                            // .padding(.top, 16)
-                            .padding(.bottom, 8)
+                            // // .padding(.top, 16)
+                            // .padding(.bottom, 8)
                         
                         Text("Need a new direction? Choose a different prompt to continue your echo.")
                             .font(.system(size: 14, weight: .medium))
