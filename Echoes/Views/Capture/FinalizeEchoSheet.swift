@@ -16,6 +16,8 @@ struct FinalizeEchoSheet: View {
     @State private var showImageSourceDialog = false
     @State private var showCamera = false
     @State private var showPhotosPicker = false
+    @State private var showValidationAlert = false
+    @State private var validationMessage = ""
     
     init(prompt: Prompt? = nil, sessionManager: CaptureSessionManager, onSave: @escaping () -> Void) {
         self.prompt = prompt
@@ -97,7 +99,23 @@ struct FinalizeEchoSheet: View {
                 Spacer()
                 
                 // Save Button
-                Button(action: saveEcho) {
+                Button(action: {
+                    let hasTitle = !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    let hasPhoto = selectedImageData != nil
+                    
+                    if hasTitle && hasPhoto {
+                        saveEcho()
+                    } else {
+                        if !hasTitle && !hasPhoto {
+                            validationMessage = "Please add a photo and enter a title for your echo."
+                        } else if !hasTitle {
+                            validationMessage = "Please enter a title for your echo."
+                        } else {
+                            validationMessage = "Please add a photo to your echo."
+                        }
+                        showValidationAlert = true
+                    }
+                }) {
                     Text("Save to Library")
                         .frame(maxWidth: .infinity)
                 }
@@ -125,6 +143,11 @@ struct FinalizeEchoSheet: View {
                         selectedImageData = data
                     }
                 }
+            }
+            .alert("Missing Details", isPresented: $showValidationAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(validationMessage)
             }
         }
     }
