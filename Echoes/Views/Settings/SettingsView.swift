@@ -96,11 +96,7 @@ struct SettingsView: View {
                         
                         // Support & About Section
                         SettingsSection(title: "Support & About") {
-                            NavigationLink(destination: Text("Quick Start Guide details here.")
-                                .font(.title3)
-                                .foregroundColor(.neoCharcoal)
-                                .navigationTitle("Help & Tutorials")
-                                .navigationBarTitleDisplayMode(.inline)) {
+                            NavigationLink(destination: FieldGuideView()) {
                                 HStack {
                                     SettingsRowLabel(icon: "questionmark.circle", title: "Help & Tutorials", subtitle: "Learn how to use Echoes.")
                                     Spacer()
@@ -244,7 +240,7 @@ struct SettingsView: View {
                         
                         // Version Info
                         VStack(spacing: 4) {
-                            Text("Echoes v1.0.0 (Build 2026)")
+                            Text("Echoes v1.0.0")
                                 .font(.system(size: 12, weight: .bold))
                             Text("Created with ♥ for Swift Student Challenge")
                                 .font(.system(size: 10))
