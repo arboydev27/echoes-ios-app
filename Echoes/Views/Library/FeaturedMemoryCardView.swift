@@ -1,9 +1,7 @@
 import SwiftUI
-import SwiftData
 
 struct FeaturedMemoryCardView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Bindable var echo: Echo
+    let echo: Echo
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -39,32 +37,17 @@ struct FeaturedMemoryCardView: View {
             .clipped()
             
             // Bottom Info Area
-            HStack(alignment: .bottom) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(echo.title)
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.white)
-                        .lineLimit(1)
-                        .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
-                    
-                    Text(echo.dateRecorded.formatted(date: .abbreviated, time: .shortened))
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.9))
-                        .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
-                }
+            VStack(alignment: .leading, spacing: 8) {
+                Text(echo.title)
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                    .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
                 
-                Spacer()
-                
-                Button(action: {
-                    echo.isFavorite.toggle()
-                    try? modelContext.save()
-                }) {
-                    Image(systemName: echo.isFavorite ? "heart.fill" : "heart")
-                        .foregroundColor(echo.isFavorite ? .red : .white.opacity(0.9))
-                        .font(.title2)
-                        .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
-                }
-                .padding(.bottom, 2)
+                Text(echo.dateRecorded.formatted(date: .abbreviated, time: .shortened))
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.9))
+                    .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
             }
             .padding(.horizontal, 20)
             .padding(.top, 40) // More space for the gradient
