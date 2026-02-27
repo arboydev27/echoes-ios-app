@@ -169,6 +169,7 @@ struct ConnectionPlaybackView: View {
         .navigationBarHidden(true)
         .onAppear {
             if let url = StorageManager.shared.getAudioURL(filename: echo.audioFilename) {
+                player.joyPins = echo.joyPins
                 player.loadAudio(url: url)
             }
         }

@@ -38,7 +38,7 @@ struct AudioScrubberView: View {
                     // Joy Pins
                     ForEach(joyPins, id: \.self) { pin in
                         Image(systemName: "star.fill")
-                            .font(.system(size: 16))
+                            .font(.system(size: 10))
                             .foregroundColor(.neoMustard)
                             .shadow(color: .neoCharcoal.opacity(0.5), radius: 1)
                             .position(x: geo.size.width * pin, y: geo.size.height / 2)

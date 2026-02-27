@@ -1,6 +1,7 @@
 import Foundation
 import Vision
 import AVFoundation
+import UIKit
 
 @Observable
 final class FaceTrackingService {

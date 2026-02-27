@@ -7,10 +7,12 @@ final class AudioPlayerManager: NSObject, AVAudioPlayerDelegate {
     var isPlaying = false
     var currentTime: TimeInterval = 0.0
     var duration: TimeInterval = 0.0
+    var joyPins: [TimeInterval] = []
     
     private var audioPlayer: AVAudioPlayer?
     private var playbackTimer: Timer?
     private var hapticEngine: CHHapticEngine?
+    private var lastTriggeredPinTime: TimeInterval = -1.0
     
     override init() {
         super.init()
@@ -82,12 +84,13 @@ final class AudioPlayerManager: NSObject, AVAudioPlayerDelegate {
             self.currentTime = player.currentTime
             player.updateMeters()
             
-            let power = player.averagePower(forChannel: 0)
-            let normalizedPower = max(0.0, min(1.0, Double(power + 60.0) / 60.0))
-            
-            // Only trigger haptic if power is quite significant to feel like a voice pulse
-            if normalizedPower > 0.6 {
-                self.triggerHapticPulse(intensity: Float(normalizedPower))
+            // Check if we crossed a Joy Pin for a subtle haptic hum
+            for pin in self.joyPins {
+                if abs(self.currentTime - pin) < 0.15 && abs(self.lastTriggeredPinTime - pin) > 1.0 {
+                    self.triggerHapticHum()
+                    self.lastTriggeredPinTime = pin
+                    break
+                }
             }
         }
     }
@@ -97,19 +100,21 @@ final class AudioPlayerManager: NSObject, AVAudioPlayerDelegate {
         playbackTimer = nil
     }
     
-    private func triggerHapticPulse(intensity: Float) {
+    private func triggerHapticHum() {
         guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return }
         
-        let intensityParam = CHHapticEventParameter(parameterID: .hapticIntensity, value: intensity)
-        let sharpnessParam = CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.5)
-        let event = CHHapticEvent(eventType: .hapticTransient, parameters: [intensityParam, sharpnessParam], relativeTime: 0)
+        let intensityParam = CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.5)
+        let sharpnessParam = CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.2)
+        
+        // A subtle continuous hum for 0.15 seconds
+        let event = CHHapticEvent(eventType: .hapticContinuous, parameters: [intensityParam, sharpnessParam], relativeTime: 0, duration: 0.15)
         
         do {
             let pattern = try CHHapticPattern(events: [event], parameters: [])
-            let player = try hapticEngine?.makePlayer(with: pattern)
-            try player?.start(atTime: CHHapticTimeImmediate)
+            let hapticPlayer = try hapticEngine?.makePlayer(with: pattern)
+            try hapticPlayer?.start(atTime: CHHapticTimeImmediate)
         } catch {
-            print("Failed to play haptic pattern: \(error)")
+            print("Failed to play haptic hum: \(error)")
         }
     }
     
