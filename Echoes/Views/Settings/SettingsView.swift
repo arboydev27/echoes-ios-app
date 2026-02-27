@@ -112,16 +112,76 @@ struct SettingsView: View {
                             Divider().background(Color.neoCharcoal.opacity(0.3))
                             
                             NavigationLink(destination: ScrollView {
-                                VStack(alignment: .leading, spacing: 16) {
-                                    Text("Meet the Developer")
-                                        .font(.largeTitle.weight(.heavy))
-                                        .foregroundColor(.neoCharcoal)
-                                    Text("Hi! I'm Arboy Magomba, and I built Echoes for the Swift Student Challenge 2026. My goal is to capture memories authentically.")
+                                VStack(alignment: .center, spacing: 24) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.neoMint)
+                                            .frame(width: 160, height: 160)
+                                            .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
+                                        
+                                        if let _ = UIImage(named: "DeveloperPhoto") {
+                                            Image("DeveloperPhoto")
+                                                .resizable()
+                                                .scaledToFill()
+                                                .scaleEffect(1.5) // Zoom in slightly for a headshot look
+                                                .offset(y: +25) // Move up slightly
+                                                .frame(width: 152, height: 152)
+                                                .clipShape(Circle())
+                                        } else {
+                                            Image(systemName: "person.crop.circle.fill")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .foregroundColor(.neoCharcoal)
+                                                .frame(width: 140, height: 140)
+                                                .clipShape(Circle())
+                                        }
+                                    }
+                                    .overlay(Circle().stroke(Color.neoCharcoal, lineWidth: 3))
+                                    .padding(.top, 24)
+                                    
+                                    VStack(alignment: .center, spacing: 16) {
+                                        Text("Meet the Developer")
+                                            .font(.largeTitle.weight(.heavy))
+                                            .foregroundColor(.neoCharcoal)
+                                            .multilineTextAlignment(.center)
+                                        
+                                        VStack(alignment: .leading, spacing: 16) {
+                                            Text("Hi, I’m Arboy. I built Echoes for the Swift Student Challenge 2026 out of a deeply personal need. As an international student living thousands of miles away from home, I realized that the things I missed most weren't just places, but the specific sounds of my family, the exact cadence of a parent's voice or the spontaneous joy of a shared laugh.")
+                                            
+                                            Text("I created Echoes to bridge that physical and temporal distance. My goal was to move beyond standard voice memos and use on-device intelligence to capture the true essence of a conversation. By combining Apple's privacy-first AI and Vision with tactile haptics, Echoes turns fleeting moments into living, physical memories that you can hold in your hand, no matter how far apart you are.")
+                                        }
                                         .font(.body)
                                         .foregroundColor(.neoCharcoal)
                                         .lineSpacing(6)
+                                        .multilineTextAlignment(.leading)
+                                        .padding(.horizontal, 16)
+                                        
+                                        // Social Links
+                                        HStack(spacing: 24) {
+                                            Link(destination: URL(string: "https://github.com/arboydev27")!) {
+                                                HStack(spacing: 6) {
+                                                    Image(systemName: "curlybraces.square.fill")
+                                                    Text("GitHub")
+                                                        .font(.system(size: 14, weight: .medium))
+                                                }
+                                                .foregroundColor(.neoCharcoal.opacity(0.5))
+                                            }
+                                            
+                                            Link(destination: URL(string: "https://www.linkedin.com/in/arboy-magomba/")!) {
+                                                HStack(spacing: 6) {
+                                                    Image(systemName: "link.circle.fill")
+                                                    Text("LinkedIn")
+                                                        .font(.system(size: 14, weight: .medium))
+                                                }
+                                                .foregroundColor(.neoCharcoal.opacity(0.5))
+                                            }
+                                        }
+                                        .padding(.top, 8)
+                                        .padding(.bottom, 24)
+                                    }
                                 }
                                 .padding()
+                                .frame(maxWidth: .infinity)
                                 .navigationTitle("About Me")
                                 .navigationBarTitleDisplayMode(.inline)
                             }) {
