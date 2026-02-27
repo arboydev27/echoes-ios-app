@@ -1,25 +1,31 @@
 import SwiftUI
 
 struct MainTabView: View {
-    @State private var selectedTab = 0
+    @State private var selectedTab = 1
     @State private var showCapture = false
+    
+    init() {
+        UITabBar.appearance().isHidden = true
+    }
     
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                LibraryView()
-                    .tag(0)
-                
-                KindleView()
-                    .tag(1)
-                
-                Color.clear
-                    .tag(2)
-                
-                OrbitView()
-                    .tag(3)
+                Group {
+                    LibraryView()
+                        .tag(0)
+                    
+                    KindleView()
+                        .tag(1)
+                    
+                    Color.clear
+                        .tag(2)
+                    
+                    OrbitView()
+                        .tag(3)
+                }
+                .toolbar(.hidden, for: .tabBar)
             }
-            .toolbar(.hidden, for: .tabBar)
             
             CustomTabBar(selectedTab: $selectedTab, showCapture: $showCapture)
         }
@@ -27,6 +33,7 @@ struct MainTabView: View {
             CaptureView(startImmediately: false)
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
+        .ignoresSafeArea(.container, edges: .bottom)
     }
 }
 
@@ -35,33 +42,56 @@ struct CustomTabBar: View {
     @Binding var showCapture: Bool
     
     var body: some View {
-        HStack(spacing: 0) {
-            TabBarButton(icon: "film.stack.fill", title: "Library", isSelected: selectedTab == 0) {
-                selectedTab = 0
+        HStack(spacing: 16) {
+            // Main Pill
+            HStack(spacing: 0) {
+                TabBarButton(icon: "flame.fill", title: "Kindle", isSelected: selectedTab == 1) {
+                    selectedTab = 1
+                }
+                
+                TabBarButton(icon: "mic.fill", title: "Capture", isSelected: false) {
+                    showCapture = true
+                }
+                
+                TabBarButton(icon: "film.stack.fill", title: "Library", isSelected: selectedTab == 0) {
+                    selectedTab = 0
+                }
             }
+            .frame(height: 72)
+            .background(.regularMaterial)
+            .clipShape(Capsule())
+            .overlay(
+                Capsule()
+                    .stroke(.white.opacity(0.5), lineWidth: 0.5)
+                    .blendMode(.overlay)
+            )
+            .shadow(color: .black.opacity(0.15), radius: 20, x: 0, y: 10)
             
-            TabBarButton(icon: "flame.fill", title: "Kindle", isSelected: selectedTab == 1) {
-                selectedTab = 1
-            }
-            
-            TabBarButton(icon: "mic.fill", title: "Capture", isSelected: false) {
-                showCapture = true
-            }
-            
-            TabBarButton(icon: "circle.hexagonpath", title: "Orbit", isSelected: selectedTab == 3) {
+            // Orbit Button
+            Button(action: {
                 selectedTab = 3
+            }) {
+                VStack(spacing: 4) {
+                    Image(systemName: "circle.hexagonpath")
+                        .font(.system(size: 24))
+                    Text("Orbit")
+                        .font(.system(size: 10, weight: .bold))
+                        .textCase(.uppercase)
+                }
+                .frame(width: 72, height: 72)
+                .foregroundColor(selectedTab == 3 ? .neoPrimary : .neoCharcoal.opacity(0.5))
+                .background(.regularMaterial)
+                .clipShape(Circle())
+                .overlay(
+                    Circle()
+                        .stroke(.white.opacity(0.5), lineWidth: 0.5)
+                        .blendMode(.overlay)
+                )
+                .shadow(color: .black.opacity(0.15), radius: 20, x: 0, y: 10)
             }
         }
         .padding(.horizontal, 16)
-        .padding(.top, 12)
-        .padding(.bottom, 32)
-        .background(Color.neoBackground)
-        .overlay(
-            Rectangle()
-                .frame(height: 2)
-                .foregroundColor(.neoCharcoal),
-            alignment: .top
-        )
+        .padding(.bottom, 16)
     }
 }
 
