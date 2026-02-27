@@ -3,7 +3,7 @@ import Combine
 
 struct CaptureView: View {
     @Environment(\.dismiss) var dismiss
-    var prompt: Prompt?
+    @State var prompt: Prompt?
     var startImmediately: Bool
     
     @AppStorage("enableCountdown") private var enableCountdown = true
@@ -11,6 +11,8 @@ struct CaptureView: View {
     @State private var timeElapsed: TimeInterval = 0
     @State private var showSavedToast = false
     @State private var showFinalizeSheet = false
+    @State private var showPivotSheet = false
+    @State private var pivotPrompts: [Prompt] = []
     
     // Core Services
     @State private var sessionManager = CaptureSessionManager()
@@ -18,7 +20,7 @@ struct CaptureView: View {
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     init(prompt: Prompt? = nil, startImmediately: Bool = true) {
-        self.prompt = prompt
+        _prompt = State(initialValue: prompt)
         self.startImmediately = startImmediately
     }
     
@@ -193,12 +195,18 @@ struct CaptureView: View {
                 .buttonStyle(NeoRetroIconButtonStyle(backgroundColor: .clear, foregroundColor: .clear, size: 96))
                 .disabled(sessionManager.state == .processing)
                 
-                // Add Note Button
-                Button(action: {}) {
-                    Image(systemName: "text.badge.plus")
+                // Pivot Button
+                Button(action: {
+                    // Generate 3 random prompts that are different from the current one
+                    let availablePrompts = Prompt.samples.filter { $0.id != prompt?.id }
+                    pivotPrompts = Array(availablePrompts.shuffled().prefix(3))
+                    showPivotSheet = true
+                }) {
+                    Image(systemName: "shuffle")
                         .font(.title2)
                 }
                 .buttonStyle(NeoRetroIconButtonStyle(size: 56))
+                .disabled(sessionManager.state == .processing)
             }
             
             Text(sessionManager.state == .processing ? "Processing Echo..." : (hasStarted ? "Tap square to finish" : "Tap mic to capture"))
@@ -256,6 +264,78 @@ struct CaptureView: View {
             }
             .presentationDetents([.height(540)])
             .interactiveDismissDisabled()
+        }
+        .sheet(isPresented: $showPivotSheet) {
+            NavigationView {
+                ScrollView {
+                    VStack(spacing: 16) {
+                        Text("Pivot Topic")
+                            .font(.system(size: 24, weight: .black))
+                            .foregroundColor(.neoCharcoal)
+                            // .padding(.top, 16)
+                            .padding(.bottom, 8)
+                        
+                        Text("Need a new direction? Choose a different prompt to continue your echo.")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.neoCharcoal.opacity(0.6))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 24)
+                            .padding(.bottom, 16)
+                        
+                        ForEach(pivotPrompts) { pivotPrompt in
+                            Button(action: {
+                                prompt = pivotPrompt
+                                showPivotSheet = false
+                            }) {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    HStack {
+                                        Text(pivotPrompt.category.uppercased())
+                                            .font(.system(size: 10, weight: .black))
+                                            .foregroundColor(.neoCharcoal.opacity(0.6))
+                                            .tracking(1)
+                                        
+                                        Spacer()
+                                        
+                                        Image(systemName: pivotPrompt.icon)
+                                            .foregroundColor(.neoCharcoal)
+                                    }
+                                    
+                                    Text(pivotPrompt.text)
+                                        .font(.system(size: 16, weight: .bold, design: .serif))
+                                        .foregroundColor(.neoCharcoal)
+                                        .multilineTextAlignment(.leading)
+                                }
+                                .padding(16)
+                                .background(Color(hex: pivotPrompt.colorHex))
+                                .cornerRadius(16)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.neoCharcoal, lineWidth: 2)
+                                )
+                                .background(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(Color.neoCharcoal)
+                                        .offset(x: 4, y: 4)
+                                )
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                    .padding(24)
+                }
+                .background(Color.neoBackground.ignoresSafeArea())
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Cancel") {
+                            showPivotSheet = false
+                        }
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.neoCharcoal)
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
         }
         .onAppear {
             if startImmediately && sessionManager.state == .idle {
