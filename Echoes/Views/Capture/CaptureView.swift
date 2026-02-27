@@ -174,7 +174,11 @@ struct CaptureView: View {
                             .fill(Color.neoPrimary)
                             .frame(width: 96, height: 96)
                         
-                        if hasStarted {
+                        if sessionManager.state == .processing {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .neoCharcoal))
+                                .scaleEffect(1.5)
+                        } else if hasStarted {
                             Rectangle()
                                 .fill(Color.neoCharcoal)
                                 .frame(width: 32, height: 32)
@@ -187,6 +191,7 @@ struct CaptureView: View {
                     }
                 }
                 .buttonStyle(NeoRetroIconButtonStyle(backgroundColor: .clear, foregroundColor: .clear, size: 96))
+                .disabled(sessionManager.state == .processing)
                 
                 // Add Note Button
                 Button(action: {}) {
@@ -249,7 +254,7 @@ struct CaptureView: View {
                     }
                 }
             }
-            .presentationDetents([.medium])
+            .presentationDetents([.height(540)])
             .interactiveDismissDisabled()
         }
         .onAppear {
