@@ -26,17 +26,20 @@ final class AudioRecorderManager: NSObject, AVAudioRecorderDelegate {
         }
     }
     
-    func startRecording() {
+    func startRecording(quality: String = "High Fidelity") {
         let tempDir = FileManager.default.temporaryDirectory
         let filename = "temp_recording_\(UUID().uuidString).m4a"
         let fileURL = tempDir.appendingPathComponent(filename)
         self.tempURL = fileURL
         
+        let sampleRate: Double = (quality == "Space Saver") ? 22050 : 44100
+        let encoderQuality: AVAudioQuality = (quality == "Space Saver") ? .medium : .high
+        
         let settings: [String: Any] = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-            AVSampleRateKey: 44100,
+            AVSampleRateKey: sampleRate,
             AVNumberOfChannelsKey: 1,
-            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+            AVEncoderAudioQualityKey: encoderQuality.rawValue
         ]
         
         do {

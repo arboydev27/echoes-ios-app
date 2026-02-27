@@ -7,6 +7,7 @@ struct CaptureView: View {
     var startImmediately: Bool
     
     @AppStorage("enableCountdown") private var enableCountdown = true
+    @AppStorage("recordingQuality") private var recordingQuality = "High Fidelity"
     @State private var timeElapsed: TimeInterval = 0
     @State private var showSavedToast = false
     @State private var showFinalizeSheet = false
@@ -159,7 +160,7 @@ struct CaptureView: View {
                                 let granted = await sessionManager.requestAllPermissions()
                                 guard granted else { return }
                             }
-                            sessionManager.startSequence(withCountdown: enableCountdown)
+                            sessionManager.startSequence(withCountdown: enableCountdown, quality: recordingQuality)
                         }
                     } else if sessionManager.state == .recording {
                         // Handle stop and process
@@ -256,7 +257,7 @@ struct CaptureView: View {
                 Task {
                     let permissionsGranted = await sessionManager.requestAllPermissions()
                     if permissionsGranted {
-                        sessionManager.startSequence(withCountdown: enableCountdown)
+                        sessionManager.startSequence(withCountdown: enableCountdown, quality: recordingQuality)
                     }
                 }
             }

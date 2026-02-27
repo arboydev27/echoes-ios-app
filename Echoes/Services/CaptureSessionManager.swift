@@ -29,6 +29,8 @@ final class CaptureSessionManager {
     var tempAudioURL: URL?
     var hasPermissions: Bool = false
     
+    var recordingQuality: String = "High Fidelity"
+    
     // Timer for countdown
     private var countdownTimer: Timer?
     
@@ -62,8 +64,10 @@ final class CaptureSessionManager {
     
     // MARK: - Sequence Methods
     
-    func startSequence(withCountdown: Bool = true) {
+    func startSequence(withCountdown: Bool = true, quality: String = "High Fidelity") {
         guard state == .idle || state == .error("") else { return }
+        
+        self.recordingQuality = quality
         
         if !withCountdown {
             beginRecording()
@@ -104,7 +108,7 @@ final class CaptureSessionManager {
         }
         
         cameraService.startSession()
-        audioManager.startRecording()
+        audioManager.startRecording(quality: recordingQuality)
     }
     
     func stopAndProcessSequence() {
