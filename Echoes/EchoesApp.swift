@@ -76,10 +76,29 @@ struct EchoesApp: App {
         }
     }()
 
+    @State private var isSplashScreenActive = true
+
     var body: some Scene {
         WindowGroup {
-            MainTabView()
-                .preferredColorScheme(.light)
+            ZStack {
+                MainTabView()
+                    .preferredColorScheme(.light)
+                    .scaleEffect(isSplashScreenActive ? 0.95 : 1.0)
+                    .opacity(isSplashScreenActive ? 0 : 1)
+                
+                if isSplashScreenActive {
+                    SplashScreenView()
+                        .transition(.opacity)
+                        .zIndex(1)
+                }
+            }
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                    withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                        isSplashScreenActive = false
+                    }
+                }
+            }
         }
         .modelContainer(sharedModelContainer)
     }

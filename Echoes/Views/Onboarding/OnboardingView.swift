@@ -60,42 +60,31 @@ struct OnboardingView: View {
 // MARK: - Slide 1: Welcome
 struct WelcomeSlide: View {
     var body: some View {
-        VStack(spacing: 30) {
-            ZStack {
-                // Big Decorative Circle
-                Circle()
-                    .fill(Color.neoMustard)
-                    .frame(width: 240, height: 240)
-                    .overlay(
-                        Circle()
-                            .stroke(Color.neoCharcoal, lineWidth: 3)
-                    )
-                    .background(
-                        Circle()
-                            .fill(Color.neoCharcoal)
-                            .offset(x: 10, y: 10)
-                    )
-                
-                Image(systemName: "microphone.and.signal.meter")
-                    .font(.system(size: 100))
-                    .foregroundColor(.neoCharcoal)
-                    .shadow(color: .white, radius: 0, x: 4, y: 4)
-            }
-            .padding(.top, 40)
+        VStack(spacing: 40) {
+            Spacer()
+            
+            // App Logo (Static & Resized)
+            Image("AppLogo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 120, height: 120)
+                .clipShape(RoundedRectangle(cornerRadius: 28))
+                .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
             
             VStack(spacing: 16) {
-                Text("ECHOES")
+                Text("Echoes")
                     .font(.system(size: 48, weight: .black, design: .serif))
                     .foregroundColor(.neoCharcoal)
-                    .tracking(4)
+                    .tracking(2)
                 
-                Text("Your voice. Your memories.\nPreserved forever.")
+                Text("Your voice. Your memories.\npreserved forever")
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.neoCharcoal.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
             }
             
+            Spacer()
             Spacer()
         }
     }
@@ -105,21 +94,23 @@ struct WelcomeSlide: View {
 struct TechPrivacySlide: View {
     var body: some View {
         VStack(spacing: 30) {
+            Spacer()
+            
             Text("100% PRIVATE & OFFLINE")
                 .font(.system(size: 12, weight: .black))
                 .foregroundColor(.neoPrimary)
                 .tracking(2)
-                .padding(.top, 40)
             
             VStack(alignment: .leading, spacing: 20) {
-                FeatureRow(icon: "lock.shield.fill", color: .neoMint, title: "On-Device Processing", description: "Your audio never leaves this iPhone. No cloud, no tracking.")
+                FeatureRow(icon: "lock.shield.fill", color: .neoMint, title: "On-Device Privacy", description: "Your audio never leaves this iPhone. No cloud. Local storage only.")
                 
-                FeatureRow(icon: "waveform", color: .neoLilac, title: "Offline Transcription", description: "Powered by SFSpeech. Real-time text generation without internet.")
+                FeatureRow(icon: "waveform", color: .neoLilac, title: "Natural Language Processing", description: "Offline SFSpeech & NLP models generate transcripts and identify themes without internet.")
                 
-                FeatureRow(icon: "face.smiling.fill", color: .neoMustard, title: "Emotion Mapping", description: "Using Vision framework to detect smiles and highlights.")
+                FeatureRow(icon: "face.smiling.fill", color: .neoMustard, title: "CoreML Intelligence", description: "Using Vision & CoreML frameworks to detect smiles and map your emotional journey.")
             }
             .padding(.horizontal, 30)
             
+            Spacer()
             Spacer()
         }
     }
