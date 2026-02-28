@@ -83,12 +83,11 @@ struct PromptCardView: View {
                         Image(systemName: "hand.point.right.fill")
                             .font(.system(size: 14, weight: .bold))
                     }
-                    .foregroundColor(.neoCharcoal)
+                    .foregroundColor(.neoCharcoal.opacity(0.6))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
-                    .background(Color.white)
+                    .background(Color.white.opacity(0.5))
                     .cornerRadius(20)
-                    .shadow(color: .neoCharcoal.opacity(0.1), radius: 4, y: 2)
                 }
             }
             .padding(.horizontal, 24)
