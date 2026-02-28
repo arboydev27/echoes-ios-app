@@ -32,8 +32,9 @@ struct TranscriptView: View {
                     .frame(height: 24)
                 Spacer()
                 LinearGradient(colors: [.clear, .neoBackground], startPoint: .top, endPoint: .bottom)
-                    .frame(height: 48)
+                    .frame(height: 64)
             }
+            .ignoresSafeArea(edges: .bottom)
             .allowsHitTesting(false)
         )
     }

@@ -272,6 +272,7 @@ struct CaptureView: View {
             }
         }
         .background(Color.neoBackground.ignoresSafeArea())
+        .ignoresSafeArea(.keyboard)
         .onChange(of: sessionManager.state) { _, newState in
             if newState == .finalizing {
                 showFinalizeSheet = true

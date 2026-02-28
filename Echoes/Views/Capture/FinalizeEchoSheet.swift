@@ -29,18 +29,21 @@ struct FinalizeEchoSheet: View {
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 24) {
+            GeometryReader { geometry in
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 24) {
                 // Header
                 VStack(spacing: 4) {
                     Text("Echo Captured!")
                         .font(.system(size: 28, weight: .black))
                         .foregroundColor(.neoCharcoal)
+                        .fixedSize(horizontal: false, vertical: true)
                     
                     Text("Analyzing audio & smiles...")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.neoCharcoal.opacity(0.6))
                 }
-                .padding(.top, 24)
+                .padding(.top, 40)
                 
                 // Polaroid Photo Placeholder
                 Button(action: {
@@ -143,6 +146,8 @@ struct FinalizeEchoSheet: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
+            .frame(minHeight: geometry.size.height)
+            }
             .background(Color.neoBackground.ignoresSafeArea())
             .confirmationDialog("Change Photo", isPresented: $showImageSourceDialog) {
                 Button("Take Photo") {
@@ -169,6 +174,7 @@ struct FinalizeEchoSheet: View {
             } message: {
                 Text(validationMessage)
             }
+        }
         }
     }
     
