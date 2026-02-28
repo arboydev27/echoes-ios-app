@@ -12,7 +12,7 @@ import SwiftData
 struct EchoesApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Echo.self,
+            Echo.self, SpeakerProfile.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

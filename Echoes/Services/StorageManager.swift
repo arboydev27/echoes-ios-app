@@ -109,4 +109,46 @@ final class StorageManager {
             print("Failed to delete cover image: \(error)")
         }
     }
+    
+    // MARK: - Avatars
+    
+    /// Saves avatar image data into the Document directory and returns its filename.
+    /// - Parameter data: The raw image data (e.g., JPEG or PNG data).
+    /// - Returns: The filename string to be saved in SwiftData.
+    func saveAvatarImage(data: Data) throws -> String {
+        guard let documentDir = documentDirectory else {
+            throw StorageError.documentDirectoryNotFound
+        }
+        
+        let filename = "avatar_\(UUID().uuidString).jpg"
+        let destinationURL = documentDir.appendingPathComponent(filename)
+        
+        do {
+            try data.write(to: destinationURL, options: .atomic)
+            return filename
+        } catch {
+            print("Failed to save avatar image: \(error)")
+            throw StorageError.fileSaveFailed
+        }
+    }
+    
+    /// Dynamically resolves the absolute path for an avatar image at runtime.
+    /// - Parameter filename: The filename saved in SwiftData.
+    /// - Returns: The absolute URL to load the image.
+    func getAvatarImageURL(filename: String) -> URL? {
+        guard let documentDir = documentDirectory else { return nil }
+        return documentDir.appendingPathComponent(filename)
+    }
+    
+    /// Deletes an avatar image from the Document directory.
+    func deleteAvatarImage(filename: String) {
+        guard let url = getAvatarImageURL(filename: filename) else { return }
+        do {
+            if FileManager.default.fileExists(atPath: url.path) {
+                try FileManager.default.removeItem(at: url)
+            }
+        } catch {
+            print("Failed to delete avatar image: \(error)")
+        }
+    }
 }

@@ -4,6 +4,7 @@ import SwiftData
 struct OrbitView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var echoes: [Echo]
+    @Query private var profiles: [SpeakerProfile]
     
     @State private var viewModel = OrbitViewModel()
     @State private var showSettings = false
@@ -36,7 +37,7 @@ struct OrbitView: View {
                         .padding(.top, 8)
                         
                         // Main Sections
-                        OrbitMapView()
+                        OrbitMapView(speakers: viewModel.uniqueSpeakers)
                             .padding(.vertical, 8)
                         
                         VStack(spacing: 4) {
@@ -54,7 +55,10 @@ struct OrbitView: View {
                         
                         VitalStatsGrid(viewModel: viewModel)
                         
-                        NextEchoNudge(leastCategory: viewModel.leastCategory)
+                        NextEchoNudge(
+                            leastCategory: viewModel.leastCategory,
+                            targetSpeaker: viewModel.uniqueSpeakers.first?.name
+                        )
                             .padding(.top, 8)
                             .padding(.bottom, 100) // Space for TabBar
                     }
@@ -64,12 +68,17 @@ struct OrbitView: View {
             .onAppear {
                 // Animate changes or just calculate normally
                 withAnimation(.spring()) {
-                    viewModel.calculateStats(from: echoes)
+                    viewModel.calculateStats(from: echoes, profiles: profiles)
                 }
             }
             .onChange(of: echoes) { _, newCards in
                 withAnimation(.spring()) {
-                    viewModel.calculateStats(from: newCards)
+                    viewModel.calculateStats(from: newCards, profiles: profiles)
+                }
+            }
+            .onChange(of: profiles) { _, newProfiles in
+                withAnimation(.spring()) {
+                    viewModel.calculateStats(from: echoes, profiles: newProfiles)
                 }
             }
         }

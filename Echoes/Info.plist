@@ -4,5 +4,7 @@
 <dict>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Echoes uses FaceID to secure your private library of memories.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Echoes needs camera access to let you take photos for speaker profiles.</string>
 </dict>
 </plist>

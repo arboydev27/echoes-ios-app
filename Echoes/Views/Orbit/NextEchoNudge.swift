@@ -2,6 +2,7 @@ import SwiftUI
 
 struct NextEchoNudge: View {
     var leastCategory: String?
+    var targetSpeaker: String?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -31,12 +32,15 @@ struct NextEchoNudge: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        let category = leastCategory ?? "Family"
-                        Text("Grandpa's \(category) chapter is quiet.")
+                        let category = leastCategory ?? "Wisdom"
+                        let personName = targetSpeaker ?? "Someone"
+                        let possessiveName = personName.hasSuffix("s") ? "\(personName)'" : "\(personName)'s"
+                        
+                        Text("\(possessiveName) \(category) chapter is quiet.")
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(.white.opacity(0.8))
                         
-                        Text("Ask about his memories?")
+                        Text(targetSpeaker != nil ? "Ask about their memories?" : "Record a new memory?")
                             .font(.system(size: 16, weight: .bold))
                             .foregroundColor(.white)
                     }

@@ -1,7 +1,18 @@
 import SwiftUI
 
+struct SpeakerSheetItem: Identifiable, Equatable {
+    var id: String { name }
+    let name: String
+    let profile: SpeakerProfile?
+}
+
 struct OrbitMapView: View {
+    var speakers: [(name: String, profile: SpeakerProfile?)] = []
     @State private var isAnimating = false
+    
+    // Sheet State
+    @State private var selectedSpeakerName: String? = nil
+    @State private var selectedSpeakerProfile: SpeakerProfile? = nil
     
     var body: some View {
         VStack {
@@ -50,43 +61,47 @@ struct OrbitMapView: View {
                         .compositingGroup()
                         .shadow(color: .neoCharcoal, radius: 0, x: 4, y: 4)
                     
+                    let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                    let displaySpeakers = Array(speakers.prefix(5))
+                    let nodesCount = displaySpeakers.count + 1 // +1 for Invite
+                    
                     // Lines
-                    Path { path in
-                        let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                        let grandpaPos = CGPoint(x: geometry.size.width * 0.25, y: geometry.size.height * 0.25)
-                        let momPos = CGPoint(x: geometry.size.width * 0.75, y: geometry.size.height * 0.3)
-                        let invitePos = CGPoint(x: geometry.size.width * 0.75, y: geometry.size.height * 0.8)
-                        
-                        path.move(to: center)
-                        path.addQuadCurve(to: grandpaPos, control: CGPoint(x: center.x * 0.8, y: center.y * 0.6))
-                        
-                        path.move(to: center)
-                        path.addQuadCurve(to: momPos, control: CGPoint(x: center.x * 1.2, y: center.y * 0.8))
-                        
-                        path.move(to: center)
-                        path.addQuadCurve(to: invitePos, control: CGPoint(x: center.x * 1.1, y: center.y * 1.2))
+                    ForEach(0..<nodesCount, id: \.self) { index in
+                        let pos = position(for: index, total: nodesCount, in: geometry.size)
+                        Path { path in
+                            path.move(to: center)
+                            let offset: CGFloat = index % 2 == 0 ? 30 : -30
+                            path.addQuadCurve(to: pos, control: CGPoint(x: (center.x + pos.x)/2 + offset, y: (center.y + pos.y)/2 - offset))
+                        }
+                        .stroke(Color.neoCharcoal, style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
                     }
-                    .stroke(Color.neoCharcoal, style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
                     
                     // Center Node (You)
-                    OrbitNode(title: "You", iconName: "person.fill", imageName: "you-image", isCentral: true, color: .neoPrimary)
-                        .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                    // TODO: The user might also want to edit "You", relying on a special hardcoded profile name
+                    let youProfile = speakers.first(where: { $0.name == "You" })?.profile
+                    OrbitNode(title: "You", iconName: "person.fill", avatarFilename: youProfile?.avatarFilename, isCentral: true, color: .neoPrimary) {
+                        selectedSpeakerName = "You"
+                        selectedSpeakerProfile = youProfile
+                    }
+                    .position(center)
                     
-                    // Grandpa
-                    OrbitNode(title: "Grandpa", iconName: "person.2.fill", imageName: "grandpa-image", color: .white)
-                        .position(x: geometry.size.width * 0.25, y: geometry.size.height * 0.25)
+                    // Dynamic Speaker Nodes
+                    ForEach(Array(displaySpeakers.enumerated()), id: \.element.name) { index, speaker in
+                        let pos = position(for: index, total: nodesCount, in: geometry.size)
+                        OrbitNode(title: speaker.name, iconName: "person.2.fill", avatarFilename: speaker.profile?.avatarFilename, color: .white) {
+                            selectedSpeakerName = speaker.name
+                            selectedSpeakerProfile = speaker.profile
+                        }
+                        .position(pos)
                         .offset(y: isAnimating ? -5 : 5)
-                        .animation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true), value: isAnimating)
-                    
-                    // Mom
-                    OrbitNode(title: "Mom", iconName: "person.2.fill", imageName: "mom-image", color: .white)
-                        .position(x: geometry.size.width * 0.75, y: geometry.size.height * 0.3)
-                        .offset(y: isAnimating ? 5 : -5)
-                        .animation(.easeInOut(duration: 3.2).repeatForever(autoreverses: true), value: isAnimating)
+                        .animation(.easeInOut(duration: 2.5 + Double(index) * 0.2).repeatForever(autoreverses: true), value: isAnimating)
+                    }
                     
                     // Invite Node
-                    OrbitNode(title: "Invite", iconName: "plus", color: .white, isGhost: true)
-                        .position(x: geometry.size.width * 0.75, y: geometry.size.height * 0.8)
+                    let inviteIndex = nodesCount - 1
+                    let invitePos = position(for: inviteIndex, total: nodesCount, in: geometry.size)
+                    OrbitNode(title: "Invite", iconName: "plus", color: .white, isGhost: true) {}
+                        .position(invitePos)
                         .offset(y: isAnimating ? -3 : 3)
                         .animation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true), value: isAnimating)
                 }
@@ -96,16 +111,41 @@ struct OrbitMapView: View {
                 isAnimating = true
             }
         }
+        .sheet(item: Binding<SpeakerSheetItem?>(
+            get: {
+                guard let name = selectedSpeakerName else { return nil }
+                return SpeakerSheetItem(name: name, profile: selectedSpeakerProfile)
+            },
+            set: { item in
+                if item == nil {
+                    selectedSpeakerName = nil
+                    selectedSpeakerProfile = nil
+                }
+            }
+        )) { item in
+            SpeakerProfileEditor(speakerName: item.name, existingProfile: item.profile)
+                .presentationDetents([.medium])
+        }
+    }
+    
+    private func position(for index: Int, total: Int, in size: CGSize) -> CGPoint {
+        let center = CGPoint(x: size.width / 2, y: size.height / 2)
+        // Leave margins
+        let radius = min(size.width, size.height) * 0.35
+        // Spread evenly, starting from top (-pi/2)
+        let angle = CGFloat(index) / CGFloat(total) * 2 * .pi - .pi / 2
+        return CGPoint(x: center.x + cos(angle) * radius, y: center.y + sin(angle) * radius)
     }
 }
 
 struct OrbitNode: View {
     var title: String
     var iconName: String
-    var imageName: String? = nil
+    var avatarFilename: String? = nil
     var isCentral: Bool = false
     var color: Color
     var isGhost: Bool = false
+    var action: (() -> Void)? = nil
     
     var body: some View {
         let size: CGFloat = isCentral ? 64 : 48
@@ -117,8 +157,10 @@ struct OrbitNode: View {
                     .frame(width: size, height: size)
                     .shadow(color: .neoCharcoal, radius: 0, x: isCentral ? 4 : 2, y: isCentral ? 4 : 2)
                 
-                if let imageName = imageName {
-                    Image(imageName)
+                if let avatarFilename = avatarFilename,
+                   let url = StorageManager.shared.getAvatarImageURL(filename: avatarFilename),
+                   let uiImage = UIImage(contentsOfFile: url.path) {
+                    Image(uiImage: uiImage)
                         .resizable()
                         .scaledToFill()
                         .frame(width: size, height: size)
@@ -136,6 +178,7 @@ struct OrbitNode: View {
             .onTapGesture {
                 let impactHeavy = UIImpactFeedbackGenerator(style: .heavy)
                 impactHeavy.impactOccurred()
+                action?()
             }
             
             Text(title)
