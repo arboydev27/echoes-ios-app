@@ -43,7 +43,7 @@ struct SettingsView: View {
                                     Text("Space Saver").tag("Space Saver")
                                 }
                                 .pickerStyle(.segmented)
-                                .colorMultiply(.neoMint)
+                                .tint(.neoMint)
                             }
                         }
                         
@@ -309,7 +309,7 @@ struct SettingsSection<Content: View>: View {
                 content
             }
             .padding(16)
-            .background(Color.white)
+            .background(Color.neoBackground)
             .cornerRadius(12)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)

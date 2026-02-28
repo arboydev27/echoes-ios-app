@@ -91,7 +91,8 @@ struct FinalizeEchoSheet: View {
                     
                     TextField("", text: $title, prompt: Text("Name your echo...").foregroundColor(.neoCharcoal.opacity(0.25)))
                         .padding(16)
-                        .background(Color.white)
+                        .background(Color.neoBackground)
+                        .foregroundColor(.neoCharcoal)
                         .overlay(
                             Rectangle()
                                 .stroke(Color.neoCharcoal, lineWidth: 2)
@@ -109,7 +110,8 @@ struct FinalizeEchoSheet: View {
                     
                     TextField("", text: $speakerName, prompt: Text("Who is speaking?").foregroundColor(.neoCharcoal.opacity(0.25)))
                         .padding(16)
-                        .background(Color.white)
+                        .background(Color.neoBackground)
+                        .foregroundColor(.neoCharcoal)
                         .overlay(
                             Rectangle()
                                 .stroke(Color.neoCharcoal, lineWidth: 2)
