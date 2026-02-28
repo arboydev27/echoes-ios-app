@@ -175,9 +175,10 @@ struct LibraryView: View {
                                 .safeAreaPadding(.horizontal, 32)
                                 .scrollPosition(id: $currentFeaturedEchoID)
                                 .onAppear {
-                                    if currentFeaturedEchoID == nil {
-                                        currentFeaturedEchoID = featuredEchoes.first?.id
-                                    }
+                                    currentFeaturedEchoID = featuredEchoes.first?.id
+                                }
+                                .onChange(of: filteredEchoes.first?.id) {
+                                    currentFeaturedEchoID = featuredEchoes.first?.id
                                 }
                                 
                                 // Custom Paging Dots
