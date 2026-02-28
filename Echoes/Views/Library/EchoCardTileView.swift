@@ -67,6 +67,13 @@ struct EchoCardTileView: View {
                     .multilineTextAlignment(.leading)
                     .frame(height: 40, alignment: .topLeading) // Ensures 2 lines of text always takes up consistent space
                 
+                if !echo.speakerName.isEmpty {
+                    Text(echo.speakerName)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.neoCharcoal.opacity(0.8))
+                        .lineLimit(1)
+                }
+                
                 Spacer(minLength: 4)
                 
                 HStack {

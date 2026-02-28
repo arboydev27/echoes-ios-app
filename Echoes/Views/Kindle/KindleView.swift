@@ -4,6 +4,10 @@ struct KindleView: View {
     @State private var prompts: [Prompt] = Prompt.samples
     @State private var offset: CGSize = .zero
     
+    // Onboarding / Sequence mode
+    var isOnboarding: Bool = false
+    var onStartInterview: ((Prompt) -> Void)? = nil
+    
     // For navigating to CaptureView with a specific prompt
     @State private var showCapture = false
     @State private var selectedPrompt: Prompt?
@@ -23,45 +27,54 @@ struct KindleView: View {
             Color.neoBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
-                HStack {
-                    Button(action: { showSettings = true }) {
-                        Image(systemName: "line.3.horizontal")
-                            .font(.title3)
-                            .foregroundColor(.neoCharcoal)
-                    }
-                    
-                    Spacer()
-                    
-                    Text("The Kindle")
-                        .font(.system(size: 28, weight: .heavy))
-                        .foregroundColor(.neoCharcoal)
-                    
-                    Spacer()
-                    
-                    Button(action: { showSavedPrompts = true }) {
-                        Image(systemName: "bookmark")
-                            .font(.title3)
-                            .foregroundColor(.neoCharcoal)
-                    }
-
-                }
-                .padding()
-                
-                // Filters
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 12) {
-                        FilterChip(title: "All Prompts", icon: "star.fill", isSelected: selectedFilter == nil, action: {
-                            withAnimation { selectedFilter = nil }
-                        })
-                        ForEach(ThemeCategory.allCases) { category in
-                            FilterChip(title: category.rawValue, icon: category.icon, isSelected: selectedFilter == category.rawValue, action: {
-                                withAnimation { selectedFilter = category.rawValue }
-                            })
+                if !isOnboarding {
+                    // Header
+                    HStack {
+                        Button(action: { showSettings = true }) {
+                            Image(systemName: "line.3.horizontal")
+                                .font(.title3)
+                                .foregroundColor(.neoCharcoal)
                         }
+                        
+                        Spacer()
+                        
+                        Text("The Kindle")
+                            .font(.system(size: 28, weight: .heavy))
+                            .foregroundColor(.neoCharcoal)
+                        
+                        Spacer()
+                        
+                        Button(action: { showSavedPrompts = true }) {
+                            Image(systemName: "bookmark")
+                                .font(.title3)
+                                .foregroundColor(.neoCharcoal)
+                        }
+
                     }
-                    .padding(.horizontal)
-                    .padding(.bottom, 16)
+                    .padding()
+                    
+                    // Filters
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            FilterChip(title: "All Prompts", icon: "star.fill", isSelected: selectedFilter == nil, action: {
+                                withAnimation { selectedFilter = nil }
+                            })
+                            ForEach(ThemeCategory.allCases) { category in
+                                FilterChip(title: category.rawValue, icon: category.icon, isSelected: selectedFilter == category.rawValue, action: {
+                                    withAnimation { selectedFilter = category.rawValue }
+                                })
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom, 16)
+                    }
+                } else {
+                    // Simple Heading for Onboarding
+                    Text("Choose a prompt to start")
+                        .font(.system(size: 14, weight: .black))
+                        .foregroundColor(.neoPrimary)
+                        .tracking(2)
+                        .padding(.top, 40)
                 }
                 
                 Spacer()
@@ -137,8 +150,12 @@ struct KindleView: View {
                 // Start Interview Button
                 Button(action: {
                     if let topPrompt = filteredPrompts.first {
-                        selectedPrompt = topPrompt
-                        showCapture = true
+                        if isOnboarding {
+                            onStartInterview?(topPrompt)
+                        } else {
+                            selectedPrompt = topPrompt
+                            showCapture = true
+                        }
                     }
                 }) {
                     HStack(spacing: 12) {
@@ -167,7 +184,9 @@ struct KindleView: View {
             }
         }
         .fullScreenCover(isPresented: $showCapture) {
-            CaptureView(prompt: selectedPrompt)
+            if !isOnboarding {
+                CaptureView(prompt: selectedPrompt)
+            }
         }
         .sheet(isPresented: $showSettings) {
             SettingsView()

@@ -44,6 +44,14 @@ struct FeaturedMemoryCardView: View {
                     .lineLimit(1)
                     .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
                 
+                if !echo.speakerName.isEmpty {
+                    Text(echo.speakerName)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.95))
+                        .lineLimit(1)
+                        .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
+                }
+                
                 Text(echo.dateRecorded.formatted(date: .abbreviated, time: .shortened))
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.white.opacity(0.9))

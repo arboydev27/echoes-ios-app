@@ -8,11 +8,13 @@ struct MainTabView: View {
     // Internal state for the initial walkthrough sequence
     enum SequenceState {
         case boarding
+        case introKindle
         case firstCapture
         case completed
     }
     
     @State private var sequenceState: SequenceState
+    @State private var onboardingPrompt: Prompt?
     
     init() {
         UITabBar.appearance().isHidden = true
@@ -24,9 +26,6 @@ struct MainTabView: View {
     var body: some View {
         ZStack {
             // MAIN APP LAYER
-            // We keep this behind a conditional to ensure NO Kindle View is even created
-            // until the sequence is finished, or we render it underneath if we want a transition.
-            // For absolute safety against flashes, we render it only when completed.
             if sequenceState == .completed {
                 mainAppContent
                     .transition(.opacity)
@@ -39,15 +38,23 @@ struct MainTabView: View {
                         OnboardingView { shouldStartCapture in
                             if shouldStartCapture {
                                 withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                    sequenceState = .firstCapture
+                                    sequenceState = .introKindle
                                 }
                             } else {
                                 finishSequence(toTab: 1) // Default to Kindle if skipped
                             }
                         }
                         .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .leading)))
+                    } else if sequenceState == .introKindle {
+                        KindleView(isOnboarding: true) { prompt in
+                            onboardingPrompt = prompt
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                sequenceState = .firstCapture
+                            }
+                        }
+                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
                     } else if sequenceState == .firstCapture {
-                        CaptureView(startImmediately: true) {
+                        CaptureView(prompt: onboardingPrompt, startImmediately: true) {
                             finishSequence(toTab: 0) // Go to Library after first recording
                         }
                         .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .opacity))

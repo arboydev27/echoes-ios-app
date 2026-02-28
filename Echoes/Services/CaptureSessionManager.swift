@@ -162,7 +162,7 @@ final class CaptureSessionManager {
         }
     }
     
-    func finalCommit(title: String, promptText: String, coverImageData: Data?, modelContext: ModelContext) async throws {
+    func finalCommit(title: String, speakerName: String, promptText: String, coverImageData: Data?, modelContext: ModelContext) async throws {
         guard state == .finalizing, let tempURL = tempAudioURL else { return }
         
         // Move Audio to FileManager
@@ -181,6 +181,7 @@ final class CaptureSessionManager {
         // Instantiate Echo
         let echo = Echo(
             title: title,
+            speakerName: speakerName,
             promptText: promptText,
             duration: finalDuration,
             transcript: self.transcript,

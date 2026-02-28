@@ -11,6 +11,7 @@ struct FinalizeEchoSheet: View {
     var onSave: () -> Void
     
     @State private var title: String = ""
+    @State private var speakerName: String = ""
     @State private var selectedItem: PhotosPickerItem? = nil
     @State private var selectedImageData: Data? = nil
     @State private var showImageSourceDialog = false
@@ -96,23 +97,42 @@ struct FinalizeEchoSheet: View {
                 }
                 .padding(.horizontal, 24)
                 
+                // Speaker Name Input
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("SPEAKER NAME")
+                        .font(.system(size: 12, weight: .black))
+                        .foregroundColor(.neoCharcoal.opacity(0.4))
+                        .padding(.leading, 4)
+                    
+                    TextField("", text: $speakerName, prompt: Text("Who is speaking?").foregroundColor(.neoCharcoal.opacity(0.25)))
+                        .padding(16)
+                        .background(Color.white)
+                        .overlay(
+                            Rectangle()
+                                .stroke(Color.neoCharcoal, lineWidth: 2)
+                        )
+                        .font(.system(size: 18, weight: .bold))
+                }
+                .padding(.horizontal, 24)
+                
                 Spacer()
                 
                 // Save Button
                 Button(action: {
                     let hasTitle = !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    let hasSpeaker = !speakerName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                     let hasPhoto = selectedImageData != nil
                     
-                    if hasTitle && hasPhoto {
+                    if hasTitle && hasSpeaker && hasPhoto {
                         saveEcho()
                     } else {
-                        if !hasTitle && !hasPhoto {
-                            validationMessage = "Please add a photo and enter a title for your echo."
-                        } else if !hasTitle {
-                            validationMessage = "Please enter a title for your echo."
-                        } else {
-                            validationMessage = "Please add a photo to your echo."
-                        }
+                        var missingFields: [String] = []
+                        if !hasPhoto { missingFields.append("a photo") }
+                        if !hasTitle { missingFields.append("a title") }
+                        if !hasSpeaker { missingFields.append("a speaker name") }
+                        
+                        let missingString = missingFields.joined(separator: ", ")
+                        validationMessage = "Please add \(missingString) for your echo."
                         showValidationAlert = true
                     }
                 }) {
@@ -157,6 +177,7 @@ struct FinalizeEchoSheet: View {
             do {
                 try await sessionManager.finalCommit(
                     title: title.isEmpty ? (prompt?.text ?? "Untitled Echo") : title,
+                    speakerName: speakerName.isEmpty ? "Unknown Speaker" : speakerName,
                     promptText: prompt?.text ?? "",
                     coverImageData: selectedImageData,
                     modelContext: modelContext

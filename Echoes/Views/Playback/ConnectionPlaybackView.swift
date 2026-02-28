@@ -18,10 +18,14 @@ struct ConnectionPlaybackView: View {
                 
                 Spacer()
                 
-                Text(echo.title.uppercased())
+                let displayText = echo.speakerName.isEmpty ? echo.title : echo.speakerName
+                Text(displayText.uppercased())
                     .font(.system(size: 14, weight: .heavy))
                     .foregroundColor(.neoCharcoal)
                     .tracking(2)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .frame(maxWidth: 160) // Truncate cleanly in the center space
                 
                 Spacer()
                 
@@ -78,6 +82,13 @@ struct ConnectionPlaybackView: View {
                                 .foregroundColor(.neoCharcoal)
                                 .lineLimit(1)
                             
+                            if !echo.speakerName.isEmpty {
+                                Text(echo.speakerName)
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(.neoCharcoal.opacity(0.8))
+                                    .lineLimit(1)
+                            }
+                            
                             Text("\(echo.dateRecorded.formatted(date: .abbreviated, time: .omitted)) • \(echo.themeTag.uppercased())")
                                 .font(.system(size: 10, weight: .bold))
                                 .foregroundColor(.neoCharcoal.opacity(0.6))
@@ -87,16 +98,25 @@ struct ConnectionPlaybackView: View {
                         
                         // Avatars
                         HStack(spacing: -8) {
-                            Circle()
-                                .fill(Color.neoMustard)
-                                .frame(width: 32, height: 32)
-                                .overlay(Text("J").font(.system(size: 12, weight: .bold)))
-                                .overlay(Circle().stroke(Color.neoCharcoal, lineWidth: 2))
+                            if !echo.speakerName.isEmpty {
+                                let initial = String(echo.speakerName.prefix(1)).uppercased()
+                                Circle()
+                                    .fill(Color.neoMustard)
+                                    .frame(width: 32, height: 32)
+                                    .overlay(Text(initial).font(.system(size: 12, weight: .bold)))
+                                    .overlay(Circle().stroke(Color.neoCharcoal, lineWidth: 2))
+                            } else {
+                                Circle()
+                                    .fill(Color.neoMustard)
+                                    .frame(width: 32, height: 32)
+                                    .overlay(Text("U").font(.system(size: 12, weight: .bold))) // Unknown
+                                    .overlay(Circle().stroke(Color.neoCharcoal, lineWidth: 2))
+                            }
                             
                             Circle()
                                 .fill(Color.neoPrimary)
                                 .frame(width: 32, height: 32)
-                                .overlay(Text("M").font(.system(size: 12, weight: .bold)))
+                                .overlay(Text("Me").font(.system(size: 10, weight: .bold)))
                                 .overlay(Circle().stroke(Color.neoCharcoal, lineWidth: 2))
                         }
                     }

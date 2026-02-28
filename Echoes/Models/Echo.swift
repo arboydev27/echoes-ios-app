@@ -11,6 +11,7 @@ final class Echo {
     var id: UUID
     var dateRecorded: Date
     var title: String
+    var speakerName: String
     var promptText: String
     var duration: Double
     var transcript: String
@@ -24,6 +25,7 @@ final class Echo {
         id: UUID = UUID(),
         dateRecorded: Date = Date(),
         title: String,
+        speakerName: String = "",
         promptText: String,
         duration: Double,
         transcript: String,
@@ -36,6 +38,7 @@ final class Echo {
         self.id = id
         self.dateRecorded = dateRecorded
         self.title = title
+        self.speakerName = speakerName
         self.promptText = promptText
         self.duration = duration
         self.transcript = transcript
