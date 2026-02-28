@@ -2,6 +2,7 @@ import SwiftUI
 
 struct OnboardingView: View {
     @State private var currentPage = 0
+    @State private var isControlsVisible = false
     var isTutorial: Bool = false
     var onComplete: (Bool) -> Void
     
@@ -22,9 +23,15 @@ struct OnboardingView: View {
                     }
                 }
                 .padding(.top, 10)
+                .opacity(isControlsVisible || currentPage > 0 ? 1 : 0)
+                .animation(.easeIn(duration: 0.5), value: isControlsVisible || currentPage > 0)
                 
                 TabView(selection: $currentPage) {
-                    WelcomeSlide()
+                    WelcomeSlide(onBrandsVisible: {
+                        withAnimation(.easeIn(duration: 0.5)) {
+                            isControlsVisible = true
+                        }
+                    })
                         .tag(0)
                     
                     TechPrivacySlide()
@@ -52,6 +59,8 @@ struct OnboardingView: View {
                     }
                 }
                 .padding(.bottom, 50)
+                .opacity(isControlsVisible || currentPage > 0 ? 1 : 0)
+                .animation(.easeIn(duration: 0.5), value: isControlsVisible || currentPage > 0)
             }
         }
     }
@@ -59,33 +68,64 @@ struct OnboardingView: View {
 
 // MARK: - Slide 1: Welcome
 struct WelcomeSlide: View {
+    @State private var isSplashPhase = true
+    @State private var isAnimatingPulse = false
+    var onBrandsVisible: () -> Void
+    
     var body: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: 0) {
             Spacer()
             
-            // App Logo (Static & Resized)
-            Image("AppLogo")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 120, height: 120)
-                .clipShape(RoundedRectangle(cornerRadius: 28))
-                .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
-            
-            VStack(spacing: 16) {
-                Text("Echoes")
-                    .font(.system(size: 48, weight: .black, design: .serif))
-                    .foregroundColor(.neoCharcoal)
-                    .tracking(2)
+            VStack(spacing: 40) {
+                // App Logo
+                Image("AppLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 120, height: 120)
+                    .clipShape(RoundedRectangle(cornerRadius: 28))
+                    .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
+                    .scaleEffect(isAnimatingPulse ? 1.05 : 0.95)
                 
-                Text("Your voice. Your memories.\npreserved forever")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(.neoCharcoal.opacity(0.7))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
+                if !isSplashPhase {
+                    VStack(spacing: 16) {
+                        Text("Echoes")
+                            .font(.system(size: 48, weight: .black, design: .serif))
+                            .foregroundColor(.neoCharcoal)
+                            .tracking(2)
+                        
+                        Text("Your voice. Your memories.\npreserved forever")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(.neoCharcoal.opacity(0.7))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 40)
+                    }
+                    .transition(.asymmetric(insertion: .move(edge: .bottom).combined(with: .opacity), removal: .opacity))
+                    .onAppear {
+                        onBrandsVisible()
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity)
+            
+            Spacer()
+        }
+        .onAppear {
+            // Start pulsing
+            withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
+                isAnimatingPulse = true
             }
             
-            Spacer()
-            Spacer()
+            // Transition to content after delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                withAnimation(.spring(response: 1.0, dampingFraction: 0.8)) {
+                    isSplashPhase = false
+                }
+                
+                // Stop pulsing
+                withAnimation(.easeInOut(duration: 0.4)) {
+                    isAnimatingPulse = false
+                }
+            }
         }
     }
 }

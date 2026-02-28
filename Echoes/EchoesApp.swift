@@ -77,26 +77,34 @@ struct EchoesApp: App {
     }()
 
     @State private var isSplashScreenActive = true
+    
+    private var hasCompletedOnboarding: Bool {
+        UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+    }
 
     var body: some Scene {
         WindowGroup {
             ZStack {
                 MainTabView()
                     .preferredColorScheme(.light)
-                    .scaleEffect(isSplashScreenActive ? 0.95 : 1.0)
-                    .opacity(isSplashScreenActive ? 0 : 1)
+                    .scaleEffect(hasCompletedOnboarding && isSplashScreenActive ? 0.95 : 1.0)
+                    .opacity(hasCompletedOnboarding && isSplashScreenActive ? 0 : 1)
                 
-                if isSplashScreenActive {
+                if hasCompletedOnboarding && isSplashScreenActive {
                     SplashScreenView()
                         .transition(.opacity)
                         .zIndex(1)
                 }
             }
             .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                    withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                        isSplashScreenActive = false
+                if hasCompletedOnboarding {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                            isSplashScreenActive = false
+                        }
                     }
+                } else {
+                    isSplashScreenActive = false
                 }
             }
         }
