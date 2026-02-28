@@ -72,7 +72,10 @@ struct EchoesApp: App {
             
             return container
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            // Fallback to an in-memory store so the app doesn't crash (e.g. on simulator with schema mismatch)
+            print("⚠️ SwiftData store failed, using in-memory fallback: \(error)")
+            let fallback = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+            return try! ModelContainer(for: schema, configurations: [fallback])
         }
     }()
 
