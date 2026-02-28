@@ -49,18 +49,8 @@ final class Echo {
     // Helper to get category color based on themeTag
     @Transient
     var categoryColorHex: String {
-        switch themeTag.lowercased() {
-        case "childhood": return "#FFB067" // Tangerine
-        case "romance": return "#FF9CEE"   // Bubblegum
-        case "wisdom": return "#B8A7EA"    // Lavender
-        case "work": return "#90E0EF"      // Turquoise
-        case "reflection": return "#A4C3A2" // Sage
-        case "story": return "#FFD166"     // Yellow
-        case "travel": return "#90E0EF"
-        case "family": return "#A4C3A2"
-        case "home": return "#FFB067"
-        default: return "#f4e06d"          // Mustard
-        }
+        let matchingCategory = ThemeCategory.allCases.first { $0.rawValue.lowercased() == themeTag.lowercased() }
+        return matchingCategory?.colorHex ?? "#f4e06d" // Mustard
     }
     
     var formattedDuration: String {

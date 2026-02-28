@@ -33,7 +33,7 @@ class OrbitViewModel {
     
     // Helper to get least used category
     var leastCategory: String? {
-        let allCategories = ["Childhood", "Romance", "Travel", "Family", "Home"]
+        let allCategories = ThemeCategory.allCases.map { $0.rawValue }
         for cat in allCategories {
             if topicMix[cat] == nil {
                 return cat

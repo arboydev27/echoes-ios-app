@@ -149,7 +149,7 @@ final class CaptureSessionManager {
             
             let finalTheme: String
             if finalTranscript.isEmpty || finalTranscript.starts(with: "Audio captured, but") {
-               finalTheme = "General"
+               finalTheme = ThemeCategory.wisdom.rawValue
             } else {
                finalTheme = themeAnalyzer.predictTheme(from: finalTranscript)
             }

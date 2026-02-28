@@ -9,6 +9,14 @@ struct KindleView: View {
     @State private var selectedPrompt: Prompt?
     @State private var showSettings = false
     @State private var showSavedPrompts = false
+    @State private var selectedFilter: String? = nil
+    
+    var filteredPrompts: [Prompt] {
+        if let filter = selectedFilter {
+            return prompts.filter { $0.category == filter }
+        }
+        return prompts
+    }
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -43,11 +51,14 @@ struct KindleView: View {
                 // Filters
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
-                        FilterChip(title: "All Prompts", icon: "", isSelected: true, action: {})
-                        FilterChip(title: "Childhood", icon: "", isSelected: false, action: {})
-                        FilterChip(title: "Love & Dating", icon: "", isSelected: false, action: {})
-                        FilterChip(title: "Hardship", icon: "", isSelected: false, action: {})
-                        FilterChip(title: "Lessons", icon: "", isSelected: false, action: {})
+                        FilterChip(title: "All Prompts", icon: "star.fill", isSelected: selectedFilter == nil, action: {
+                            withAnimation { selectedFilter = nil }
+                        })
+                        ForEach(ThemeCategory.allCases) { category in
+                            FilterChip(title: category.rawValue, icon: category.icon, isSelected: selectedFilter == category.rawValue, action: {
+                                withAnimation { selectedFilter = category.rawValue }
+                            })
+                        }
                     }
                     .padding(.horizontal)
                     .padding(.bottom, 16)
@@ -57,7 +68,8 @@ struct KindleView: View {
                 
                 // Card Stack
                 ZStack {
-                    ForEach(Array(prompts.enumerated().reversed()), id: \.element.id) { index, prompt in
+                    let displayedPrompts = filteredPrompts
+                    ForEach(Array(displayedPrompts.enumerated().reversed()), id: \.element.id) { index, prompt in
                         if index < 4 {
                             PromptCardView(prompt: prompt, onToggleSave: {
                                 if let i = prompts.firstIndex(where: { $0.id == prompt.id }) {
@@ -68,7 +80,7 @@ struct KindleView: View {
                                 .offset(cardOffset(index: index))
                                 .rotationEffect(.degrees(cardRotation(index: index)))
                                 .opacity(cardOpacity(index: index))
-                                .zIndex(Double(prompts.count - index))
+                                .zIndex(Double(displayedPrompts.count - index))
                                 .gesture(
                                     index == 0 ? DragGesture()
                                         .onChanged { gesture in
@@ -98,18 +110,19 @@ struct KindleView: View {
                         }
                     }
                     
-                    if prompts.isEmpty {
+                    if displayedPrompts.isEmpty {
                         VStack {
                             Image(systemName: "checkmark.circle.fill")
                                 .font(.system(size: 60))
                                 .foregroundColor(.neoMint)
-                            Text("You've reviewed all prompts!")
+                            Text("You've reviewed all prompts here!")
                                 .font(.headline)
                                 .foregroundColor(.neoCharcoal)
                                 .padding(.top, 10)
                             
                             Button("Reset Stack") {
                                 prompts = Prompt.samples
+                                selectedFilter = nil
                             }
                             .buttonStyle(NeoRetroButtonStyle(backgroundColor: .neoMint))
                             .padding(.top, 20)
@@ -123,7 +136,7 @@ struct KindleView: View {
                 
                 // Start Interview Button
                 Button(action: {
-                    if let topPrompt = prompts.first {
+                    if let topPrompt = filteredPrompts.first {
                         selectedPrompt = topPrompt
                         showCapture = true
                     }
@@ -149,8 +162,8 @@ struct KindleView: View {
                 .buttonStyle(NeoRetroButtonStyle(backgroundColor: .neoInk, foregroundColor: .white, cornerRadius: 40, borderWidth: 0, isPaddingEnabled: false))
                 .padding(.horizontal, 24)
                 .padding(.bottom, 120) // Account for TabBar padding
-                .disabled(prompts.isEmpty)
-                .opacity(prompts.isEmpty ? 0.5 : 1)
+                .disabled(filteredPrompts.isEmpty)
+                .opacity(filteredPrompts.isEmpty ? 0.5 : 1)
             }
         }
         .fullScreenCover(isPresented: $showCapture) {
@@ -165,9 +178,10 @@ struct KindleView: View {
     }
     
     private func swipedCard() {
-        guard !prompts.isEmpty else { return }
+        guard let topCard = filteredPrompts.first else { return }
+        guard let index = prompts.firstIndex(where: { $0.id == topCard.id }) else { return }
         // Move top card back to end (or drop it)
-        var removed = prompts.removeFirst()
+        var removed = prompts.remove(at: index)
         
         let pool = [
             "#b8e6d6", // Mint

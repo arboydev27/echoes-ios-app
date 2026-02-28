@@ -15,7 +15,7 @@ struct LibraryView: View {
     @State private var isUnlocked = false
     @State private var showSavedEchoes = false
     
-    let filters = ["Childhood", "Romance", "Travel", "Family", "Home"]
+    let filters = ThemeCategory.allCases.map { $0.rawValue }
     
     var filteredEchoes: [Echo] {
         echoes.filter { echo in
@@ -267,14 +267,7 @@ struct LibraryView: View {
     }
     
     func iconForCategory(_ category: String) -> String {
-        switch category.lowercased() {
-        case "childhood": return "figure.child"
-        case "romance": return "heart.fill"
-        case "travel": return "airplane"
-        case "family": return "person.2.fill"
-        case "home": return "house.fill"
-        default: return "star.fill"
-        }
+        return ThemeCategory.allCases.first(where: { $0.rawValue.lowercased() == category.lowercased() })?.icon ?? "star.fill"
     }
 }
 

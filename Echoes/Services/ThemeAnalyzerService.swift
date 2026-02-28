@@ -28,12 +28,12 @@ class ThemeAnalyzerService {
     func predictTheme(from text: String) -> String {
         // Fallback for short transcripts
         guard text.count > 10 else {
-            return "General" // Default for very short text
+            return ThemeCategory.wisdom.rawValue // Default for very short text
         }
         
         guard let nlModel = self.nlModel else {
             print("ThemeAnalyzerService: Model not initialized. Returning fallback theme.")
-            return "General"
+            return ThemeCategory.wisdom.rawValue
         }
         
         // Let NaturalLanguage model predict the label
@@ -44,7 +44,7 @@ class ThemeAnalyzerService {
             return theme
         } else {
             print("ThemeAnalyzerService: Low confidence or unpredicted. Returning fallback theme.")
-            return "General"
+            return ThemeCategory.wisdom.rawValue
         }
     }
 }
