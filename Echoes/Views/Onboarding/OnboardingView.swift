@@ -123,53 +123,44 @@ struct ActionSlide: View {
     
     var body: some View {
         VStack(spacing: 40) {
+            Spacer()
+            
+            // Minimalist Icon
             ZStack {
-                RoundedRectangle(cornerRadius: 32)
-                    .fill(Color.neoRose)
-                    .frame(width: 280, height: 320)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 32)
-                            .stroke(Color.neoCharcoal, lineWidth: 3)
-                    )
-                    .background(
-                        RoundedRectangle(cornerRadius: 32)
-                            .fill(Color.neoCharcoal)
-                            .offset(x: 10, y: 10)
-                    )
+                Circle()
+                    .fill(Color.neoPrimary.opacity(0.1))
+                    .frame(width: 120, height: 120)
                 
-                VStack(spacing: 24) {
-                    Image(systemName: "record.circle.fill")
-                        .font(.system(size: 80))
-                        .foregroundColor(.neoCharcoal)
-                    
-                    Text(isTutorial ? "Keep Exploring" : "Ready to start?")
-                        .font(.system(size: 28, weight: .bold, design: .serif))
-                        .foregroundColor(.neoCharcoal)
-                    
-                    Text(isTutorial ? "You can revisit these tips anytime in the Settings menu." : "The best way to experience Echoes is to record your first memory.")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.neoCharcoal.opacity(0.7))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 20)
-                }
-                .padding(30)
+                Image(systemName: "sparkles")
+                    .font(.system(size: 60))
+                    .foregroundColor(.neoPrimary)
             }
-            .padding(.top, 20)
+            .padding(.bottom, 20)
+            
+            VStack(spacing: 16) {
+                Text(isTutorial ? "Keep Exploring" : "Begin Your Journey")
+                    .font(.system(size: 32, weight: .bold, design: .serif))
+                    .foregroundColor(.neoCharcoal)
+                
+                Text(isTutorial ? "You can revisit these tips anytime in the Settings menu." : "The best way to experience Echoes is to record your first memory. Let's start today.")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.neoCharcoal.opacity(0.7))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+            }
+            
+            Spacer()
             
             Button(action: onComplete) {
                 Text(isTutorial ? "DISMISS" : "GET STARTED")
                     .font(.system(size: 18, weight: .black))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 70)
+                    .frame(height: 64)
                     .background(Color.neoCharcoal)
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.black, lineWidth: 1)
-                    )
+                    .clipShape(Capsule())
+                    .shadow(color: .black.opacity(0.15), radius: 10, x: 0, y: 5)
                     .padding(.horizontal, 40)
-                    .shadow(color: .neoPrimary.opacity(0.3), radius: 10, x: 0, y: 5)
             }
             
             Spacer()
