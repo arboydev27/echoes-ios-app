@@ -19,34 +19,35 @@ struct EchoesApp: App {
         do {
             let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
             
-            #if DEBUG
-            // Synchronous deep wipe and reset for debugging
-            Task { @MainActor in
-                do {
-                    try container.mainContext.delete(model: Echo.self)
-                    
-                    let sample1 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 1), title: "The Summer of '65", promptText: "Mock", duration: 60, transcript: "Mock", themeTag: "Childhood", audioFilename: "mock.m4a", coverImageFilename: "dummy_image_1")
-                    let sample2 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 2), title: "First Date at the Diner", promptText: "Mock", duration: 60, transcript: "Mock", themeTag: "Romance", audioFilename: "mock.m4a", coverImageFilename: "dummy_image_2")
-                    let sample3 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 3), title: "Trip to Paris 1980", promptText: "Mock", duration: 60, transcript: "Mock", themeTag: "Travel", audioFilename: "mock.m4a", coverImageFilename: "dummy_image_3")
-                    let sample4 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 4), title: "Holiday at the Cabin", promptText: "Mock", duration: 60, transcript: "Mock", themeTag: "Family", audioFilename: "mock.m4a", coverImageFilename: "dummy_image_4")
-                    let sample5 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 5), title: "Graduation Day", promptText: "Mock", duration: 60, transcript: "Mock", themeTag: "Childhood", audioFilename: "mock.m4a", coverImageFilename: "dummy_image_5")
-                    let sample6 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 6), title: "New Puppy Arrival", promptText: "Mock", duration: 60, transcript: "Mock", themeTag: "Home", audioFilename: "mock.m4a", coverImageFilename: "dummy_image_6")
-                    let sample7 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 7), title: "Cross Country Roadtrip", promptText: "Mock", duration: 60, transcript: "Mock", themeTag: "Travel", audioFilename: "mock.m4a", coverImageFilename: "dummy_image_7")
-                    
-                    container.mainContext.insert(sample1)
-                    container.mainContext.insert(sample2)
-                    container.mainContext.insert(sample3)
-                    container.mainContext.insert(sample4)
-                    container.mainContext.insert(sample5)
-                    container.mainContext.insert(sample6)
-                    container.mainContext.insert(sample7)
-                    
-                    try container.mainContext.save()
-                } catch {
-                    print("Failed to seed debug data: \(error)")
+            // Seed sample data on first launch for judges/showcase
+            let hasSeededData = UserDefaults.standard.bool(forKey: "hasSeededSampleData")
+            
+            if !hasSeededData {
+                Task { @MainActor in
+                    do {
+                        let sample1 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 1), title: "First Date at the Diner", promptText: "Tell the story of how you and your partner met.", duration: 210, transcript: "Oh goodness, our first date. He picked me up in that beat-up old Chevy. I was so nervous my hands were shaking. We went to that diner on 4th street, the one with the red vinyl booths. He ordered a strawberry milkshake with two straws, and when he smiled at me, I just knew. I knew he was the one. We stayed there talking until they turned off the open sign.", themeTag: "Romance", joyPins: [22.1, 85.3, 150.2, 185.0], audioFilename: "mock.m4a", coverImageFilename: "dummy_image_1", isFavorite: true)
+                        let sample2 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 3), title: "The Summer of '65", promptText: "What is your favorite childhood memory?", duration: 145, transcript: "I remember the summer of 1965 like it was yesterday. The sun was always shining, and my brother and I would ride our bikes down to the creek every single afternoon. We didn't have much money, but we had an absolute blast catching frogs and building tiny little dams out of mud and twigs. Best summer of my life.", themeTag: "Childhood", joyPins: [12.5, 45.2, 89.0, 112.4], audioFilename: "mock.m4a", coverImageFilename: "dummy_image_2")
+                        let sample3 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 7), title: "Grandpa's Advice", promptText: "What is the best piece of advice you've ever received?", duration: 95, transcript: "My grandfather used to tell me, 'Don't borrow tomorrow's troubles today.' Whenever I get stressed about the future, I think of him sitting on his porch, whittling a piece of cedar, looking completely at peace. It reminds me to just breathe and focus on the step right in front of me.", themeTag: "Wisdom", joyPins: [15.4, 60.1, 82.5], audioFilename: "mock.m4a", coverImageFilename: "dummy_image_3")
+                        let sample4 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 12), title: "The Holiday Cabin", promptText: "What is a tradition you love?", duration: 180, transcript: "Every December, the whole family crams into that tiny cabin up in the mountains. It's always freezing cold, the heater barely works, and the Wi-Fi is non-existent. But that's the magic of it. We play board games by the fire, drink hot cocoa, and actually talk to each other without staring at our phones. It's chaotic, loud, and absolutely perfect.", themeTag: "Family", joyPins: [45.0, 92.5, 130.1, 165.8], audioFilename: "mock.m4a", coverImageFilename: "dummy_image_4", isFavorite: true)
+                        let sample5 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 20), title: "College Road Trip", promptText: "Tell me about an adventure you took.", duration: 245, transcript: "Three days. Two best friends. One terrible map. We decided to drive from Texas to California for spring break. We got a flat tire in the middle of nowhere, New Mexico. Instead of panicking, we ended up stargazing on the hood of the car while waiting for a tow. It was the brightest I've ever seen the Milky Way.", themeTag: "Travel", joyPins: [55.2, 110.4, 195.0, 220.1], audioFilename: "mock.m4a", coverImageFilename: "dummy_image_5")
+                        let sample6 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 35), title: "Learning to Ride", promptText: "What was a defining moment growing up?", duration: 85, transcript: "I fell off that bike at least twenty times. My knees were so scraped up, I thought my Dad was going to throw the bike away. But my dad just kept picking me back up. 'One more try,' he said. When I finally found my balance and pedaled down the block by myself, the feeling of freedom was unbelievable.", themeTag: "Childhood", joyPins: [30.5, 75.0], audioFilename: "mock.m4a", coverImageFilename: "dummy_image_6")
+                        let sample7 = Echo(dateRecorded: Date().addingTimeInterval(-86400 * 40), title: "The New Puppy", promptText: "Describe a moment of pure joy.", duration: 120, transcript: "The box was shaking when they brought it in. We opened the flaps, and this tiny golden retriever puppy practically launched herself into my arms. She licked my entire face within three seconds. We named her Daisy, and from that day on, she slept at the foot of my bed every single night.", themeTag: "Home", joyPins: [10.1, 40.5, 88.3, 115.0], audioFilename: "mock.m4a", coverImageFilename: "dummy_image_7", isFavorite: true)
+                        
+                        container.mainContext.insert(sample1)
+                        container.mainContext.insert(sample2)
+                        container.mainContext.insert(sample3)
+                        container.mainContext.insert(sample4)
+                        container.mainContext.insert(sample5)
+                        container.mainContext.insert(sample6)
+                        container.mainContext.insert(sample7)
+                        
+                        try container.mainContext.save()
+                        UserDefaults.standard.set(true, forKey: "hasSeededSampleData")
+                    } catch {
+                        print("Failed to seed sample data: \(error)")
+                    }
                 }
             }
-            #endif
             
             return container
         } catch {
