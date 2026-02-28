@@ -87,7 +87,8 @@ struct EchoesApp: App {
             ZStack {
                 MainTabView()
                     .preferredColorScheme(.light)
-                    .scaleEffect(hasCompletedOnboarding && isSplashScreenActive ? 0.95 : 1.0)
+                    .blur(radius: hasCompletedOnboarding && isSplashScreenActive ? 20 : 0)
+                    .scaleEffect(hasCompletedOnboarding && isSplashScreenActive ? 1.15 : 1.0)
                     .opacity(hasCompletedOnboarding && isSplashScreenActive ? 0 : 1)
                 
                 if hasCompletedOnboarding && isSplashScreenActive {
@@ -99,7 +100,7 @@ struct EchoesApp: App {
             .onAppear {
                 if hasCompletedOnboarding {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                        withAnimation(.spring(response: 0.8, dampingFraction: 0.85)) {
                             isSplashScreenActive = false
                         }
                     }

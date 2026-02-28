@@ -162,46 +162,34 @@ struct ActionSlide: View {
     var onComplete: () -> Void
     
     var body: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: 0) {
             Spacer()
             
-            // Minimalist Icon
-            ZStack {
-                Circle()
-                    .fill(Color.neoPrimary.opacity(0.1))
-                    .frame(width: 120, height: 120)
-                
-                Image(systemName: "sparkles")
-                    .font(.system(size: 60))
-                    .foregroundColor(.neoPrimary)
-            }
-            .padding(.bottom, 20)
-            
-            VStack(spacing: 16) {
+            VStack(spacing: 24) {
                 Text(isTutorial ? "Keep Exploring" : "Begin Your Journey")
-                    .font(.system(size: 32, weight: .bold, design: .serif))
+                    .font(.system(size: 38, weight: .bold, design: .serif))
                     .foregroundColor(.neoCharcoal)
+                    .multilineTextAlignment(.center)
                 
                 Text(isTutorial ? "You can revisit these tips anytime in the Settings menu." : "The best way to experience Echoes is to record your first memory. Let's start today.")
-                    .font(.system(size: 16, weight: .medium))
+                    .font(.system(size: 18, weight: .medium))
                     .foregroundColor(.neoCharcoal.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
             }
             
             Spacer()
+                .frame(height: 80)
             
             Button(action: onComplete) {
                 Text(isTutorial ? "DISMISS" : "GET STARTED")
                     .font(.system(size: 18, weight: .black))
-                    .foregroundColor(.white)
+                    .tracking(1)
                     .frame(maxWidth: .infinity)
                     .frame(height: 64)
-                    .background(Color.neoCharcoal)
-                    .clipShape(Capsule())
-                    .shadow(color: .black.opacity(0.15), radius: 10, x: 0, y: 5)
-                    .padding(.horizontal, 40)
             }
+            .buttonStyle(NeoRetroButtonStyle(backgroundColor: .neoInk, foregroundColor: .white, cornerRadius: 40, borderWidth: 0, isPaddingEnabled: false))
+            .padding(.horizontal, 40)
             
             Spacer()
         }
