@@ -5,6 +5,11 @@ struct EchoCardTileView: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var echo: Echo
     
+    @State private var showRenameTitleAlert = false
+    @State private var showRenameSpeakerAlert = false
+    @State private var tempTitle = ""
+    @State private var tempSpeaker = ""
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack {
@@ -107,5 +112,45 @@ struct EchoCardTileView: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.neoCharcoal, lineWidth: 2)
         )
+        .contextMenu {
+            Button {
+                tempTitle = echo.title
+                showRenameTitleAlert = true
+            } label: {
+                Label("Rename Title", systemImage: "pencil")
+            }
+            
+            Button {
+                tempSpeaker = echo.speakerName
+                showRenameSpeakerAlert = true
+            } label: {
+                Label("Rename Speaker", systemImage: "person.badge.plus")
+            }
+            
+            Divider()
+            
+            Button(role: .destructive) {
+                modelContext.delete(echo)
+                try? modelContext.save()
+            } label: {
+                Label("Delete Echo", systemImage: "trash")
+            }
+        }
+        .alert("Rename Title", isPresented: $showRenameTitleAlert) {
+            TextField("Title", text: $tempTitle)
+            Button("Cancel", role: .cancel) { }
+            Button("Save") {
+                echo.title = tempTitle
+                try? modelContext.save()
+            }
+        }
+        .alert("Rename Speaker", isPresented: $showRenameSpeakerAlert) {
+            TextField("Speaker Name", text: $tempSpeaker)
+            Button("Cancel", role: .cancel) { }
+            Button("Save") {
+                echo.speakerName = tempSpeaker
+                try? modelContext.save()
+            }
+        }
     }
 }
