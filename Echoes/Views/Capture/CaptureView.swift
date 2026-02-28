@@ -3,6 +3,7 @@ import Combine
 
 struct CaptureView: View {
     @Environment(\.dismiss) var dismiss
+    var onDismiss: (() -> Void)? = nil // Added for ZStack integration
     @State var prompt: Prompt?
     var startImmediately: Bool
     
@@ -19,9 +20,18 @@ struct CaptureView: View {
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
-    init(prompt: Prompt? = nil, startImmediately: Bool = true) {
+    init(prompt: Prompt? = nil, startImmediately: Bool = true, onDismiss: (() -> Void)? = nil) {
         _prompt = State(initialValue: prompt)
         self.startImmediately = startImmediately
+        self.onDismiss = onDismiss
+    }
+    
+    private func close() {
+        if let onDismiss = onDismiss {
+            onDismiss()
+        } else {
+            dismiss()
+        }
     }
     
     private var hasStarted: Bool {
@@ -39,12 +49,14 @@ struct CaptureView: View {
             VStack(spacing: 0) {
                 // Header
             HStack {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "arrow.left")
-                        .font(.title2)
-                        .foregroundColor(.neoCharcoal)
+                if onDismiss == nil {
+                    Button {
+                        close()
+                    } label: {
+                        Image(systemName: "arrow.left")
+                            .font(.title2)
+                            .foregroundColor(.neoCharcoal)
+                    }
                 }
                 
                 Spacer()
@@ -72,11 +84,13 @@ struct CaptureView: View {
                 
                 Spacer()
                 
-                Button("Cancel") {
-                    dismiss()
+                if onDismiss == nil {
+                    Button("Cancel") {
+                        close()
+                    }
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.neoCharcoal)
                 }
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.neoCharcoal)
             }
             .padding()
             
@@ -272,6 +286,11 @@ struct CaptureView: View {
                 }
                 
                 sessionManager.reset()
+                
+                // Auto-close after a delay so they see the toast
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    close()
+                }
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     withAnimation {

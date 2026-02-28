@@ -4,55 +4,56 @@ struct MainTabView: View {
     @State private var selectedTab = 1
     @State private var showCapture = false
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
-    @State private var showOnboarding: Bool
+    
+    // Internal state for the initial walkthrough sequence
+    enum SequenceState {
+        case boarding
+        case firstCapture
+        case completed
+    }
+    
+    @State private var sequenceState: SequenceState
     
     init() {
         UITabBar.appearance().isHidden = true
-        // Initialize state without waiting for onAppear
-        _showOnboarding = State(initialValue: !UserDefaults.standard.bool(forKey: "hasCompletedOnboarding"))
+        // Check if we should show the onboarding sequence or if it's already done
+        let completed = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+        _sequenceState = State(initialValue: completed ? .completed : .boarding)
     }
     
     var body: some View {
         ZStack {
-            if showOnboarding {
-                OnboardingView { shouldStartCapture in
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        hasCompletedOnboarding = true
-                        showOnboarding = false
-                    }
-                    
-                    if shouldStartCapture {
-                        // Auto-open capture for the "First Guided Recording" experience
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                            showCapture = true
-                        }
-                    }
-                }
-                .transition(.opacity)
-                .zIndex(2)
+            // MAIN APP LAYER
+            // We keep this behind a conditional to ensure NO Kindle View is even created
+            // until the sequence is finished, or we render it underneath if we want a transition.
+            // For absolute safety against flashes, we render it only when completed.
+            if sequenceState == .completed {
+                mainAppContent
+                    .transition(.opacity)
             } else {
-                ZStack(alignment: .bottom) {
-                    TabView(selection: $selectedTab) {
-                        Group {
-                            LibraryView()
-                                .tag(0)
-                            
-                            KindleView()
-                                .tag(1)
-                            
-                            Color.clear
-                                .tag(2)
-                            
-                            OrbitView()
-                                .tag(3)
-                        }
-                        .toolbar(.hidden, for: .tabBar)
-                    }
+                // ONBOARDING / FIRST CAPTURE OVERLAY
+                ZStack {
+                    Color.neoBackground.ignoresSafeArea()
                     
-                    CustomTabBar(selectedTab: $selectedTab, showCapture: $showCapture)
+                    if sequenceState == .boarding {
+                        OnboardingView { shouldStartCapture in
+                            if shouldStartCapture {
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                    sequenceState = .firstCapture
+                                }
+                            } else {
+                                finishSequence(toTab: 1) // Default to Kindle if skipped
+                            }
+                        }
+                        .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .leading)))
+                    } else if sequenceState == .firstCapture {
+                        CaptureView(startImmediately: true) {
+                            finishSequence(toTab: 0) // Go to Library after first recording
+                        }
+                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .opacity))
+                    }
                 }
-                .transition(.opacity)
-                .zIndex(1)
+                .zIndex(10)
             }
         }
         .fullScreenCover(isPresented: $showCapture) {
@@ -60,6 +61,37 @@ struct MainTabView: View {
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .ignoresSafeArea(.container, edges: .bottom)
+    }
+    
+    private var mainAppContent: some View {
+        ZStack(alignment: .bottom) {
+            TabView(selection: $selectedTab) {
+                Group {
+                    LibraryView()
+                        .tag(0)
+                    
+                    KindleView()
+                        .tag(1)
+                    
+                    Color.clear
+                        .tag(2)
+                    
+                    OrbitView()
+                        .tag(3)
+                }
+                .toolbar(.hidden, for: .tabBar)
+            }
+            
+            CustomTabBar(selectedTab: $selectedTab, showCapture: $showCapture)
+        }
+    }
+    
+    private func finishSequence(toTab tab: Int) {
+        withAnimation(.easeInOut(duration: 0.5)) {
+            selectedTab = tab
+            hasCompletedOnboarding = true
+            sequenceState = .completed
+        }
     }
 }
 
