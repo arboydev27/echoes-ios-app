@@ -42,6 +42,27 @@ struct EchoesApp: App {
                         container.mainContext.insert(sample7)
                         
                         try container.mainContext.save()
+                        
+                        // Seed Speaker Profiles
+                        let youProfile = SpeakerProfile(name: "You", avatarFilename: StorageManager.shared.seedAvatar(fromAssetName: "you-image"))
+                        let grandpaBen = SpeakerProfile(name: "Grandpa Ben", avatarFilename: StorageManager.shared.seedAvatar(fromAssetName: "seed_profile_1"))
+                        let uncleJim = SpeakerProfile(name: "Uncle Jim", avatarFilename: StorageManager.shared.seedAvatar(fromAssetName: "seed_profile_2"))
+                        let mom = SpeakerProfile(name: "Mom", avatarFilename: StorageManager.shared.seedAvatar(fromAssetName: "seed_profile_3"))
+                        let auntLyssa = SpeakerProfile(name: "Aunt Lyssa", avatarFilename: StorageManager.shared.seedAvatar(fromAssetName: "seed_profile_4"))
+                        let dad = SpeakerProfile(name: "Dad", avatarFilename: StorageManager.shared.seedAvatar(fromAssetName: "seed_profile_5"))
+                        let sarah = SpeakerProfile(name: "Sarah", avatarFilename: StorageManager.shared.seedAvatar(fromAssetName: "seed_profile_6"))
+                        let grandmaRose = SpeakerProfile(name: "Grandma Rose", avatarFilename: StorageManager.shared.seedAvatar(fromAssetName: "seed_profile_7"))
+                        
+                        container.mainContext.insert(youProfile)
+                        container.mainContext.insert(grandpaBen)
+                        container.mainContext.insert(uncleJim)
+                        container.mainContext.insert(mom)
+                        container.mainContext.insert(auntLyssa)
+                        container.mainContext.insert(dad)
+                        container.mainContext.insert(sarah)
+                        container.mainContext.insert(grandmaRose)
+                        
+                        try container.mainContext.save()
                         UserDefaults.standard.set(true, forKey: "hasSeededSampleData")
                     } catch {
                         print("Failed to seed sample data: \(error)")

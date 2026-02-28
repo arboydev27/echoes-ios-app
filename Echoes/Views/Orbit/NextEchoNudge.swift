@@ -17,7 +17,26 @@ struct NextEchoNudge: View {
                 // For now, it's just visually connecting to the concept
             }) {
                 HStack(spacing: 16) {
-                    // Icon Bubble
+                    VStack(alignment: .leading, spacing: 4) {
+                        let category = leastCategory ?? "Wisdom"
+                        let personName = targetSpeaker ?? "Someone"
+                        let possessiveName = personName.hasSuffix("s") ? "\(personName)'" : "\(personName)'s"
+                        
+                        Text("\(possessiveName) \(category) chapter is quiet.")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white.opacity(0.8))
+                            .multilineTextAlignment(.leading)
+                        
+                        Text(targetSpeaker != nil ? "Ask about their memories?" : "Record a new memory?")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.leading)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Spacer()
+                    
+                    // Icon Bubble (Moved to right)
                     ZStack {
                         Circle()
                             .fill(Color.neoPrimary.opacity(0.2))
@@ -29,32 +48,6 @@ struct NextEchoNudge: View {
                         Image(systemName: "lightbulb.fill")
                             .font(.system(size: 20))
                             .foregroundColor(.neoPrimary)
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 4) {
-                        let category = leastCategory ?? "Wisdom"
-                        let personName = targetSpeaker ?? "Someone"
-                        let possessiveName = personName.hasSuffix("s") ? "\(personName)'" : "\(personName)'s"
-                        
-                        Text("\(possessiveName) \(category) chapter is quiet.")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.white.opacity(0.8))
-                        
-                        Text(targetSpeaker != nil ? "Ask about their memories?" : "Record a new memory?")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
-                    }
-                    
-                    Spacer()
-                    
-                    ZStack {
-                        Circle()
-                            .fill(Color.white.opacity(0.1))
-                            .frame(width: 32, height: 32)
-                        
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.white)
                     }
                 }
                 .padding(20)

@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import UIKit
 
 enum StorageError: Error {
     case documentDirectoryNotFound
@@ -149,6 +150,29 @@ final class StorageManager {
             }
         } catch {
             print("Failed to delete avatar image: \(error)")
+        }
+    }
+    
+    /// Seeds an avatar from an asset and returns the filename in Documents.
+    func seedAvatar(fromAssetName name: String) -> String? {
+        guard let documentDir = documentDirectory,
+              let image = UIImage(named: name),
+              let data = image.jpegData(compressionQuality: 0.8) else {
+            return nil
+        }
+        
+        let filename = "avatar_seed_\(name).jpg"
+        let destinationURL = documentDir.appendingPathComponent(filename)
+        
+        do {
+            if FileManager.default.fileExists(atPath: destinationURL.path) {
+                return filename // Already seeded
+            }
+            try data.write(to: destinationURL, options: .atomic)
+            return filename
+        } catch {
+            print("Failed to seed avatar from asset: \(error)")
+            return nil
         }
     }
 }

@@ -30,7 +30,7 @@ final class CaptureSessionManager {
     var tempAudioURL: URL?
     var hasPermissions: Bool = false
     
-    var recordingQuality: String = "High Fidelity"
+    var recordingQuality: String = "Space Saver"
     
     // Timer for countdown
     private var countdownTimer: Timer?
@@ -65,7 +65,7 @@ final class CaptureSessionManager {
     
     // MARK: - Sequence Methods
     
-    func startSequence(withCountdown: Bool = true, quality: String = "High Fidelity") {
+    func startSequence(withCountdown: Bool = true, quality: String = "Space Saver") {
         guard state == .idle || state == .error("") else { return }
         
         self.recordingQuality = quality

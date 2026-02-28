@@ -8,7 +8,7 @@ struct CaptureView: View {
     var startImmediately: Bool
     
     @AppStorage("enableCountdown") private var enableCountdown = true
-    @AppStorage("recordingQuality") private var recordingQuality = "High Fidelity"
+    @AppStorage("recordingQuality") private var recordingQuality = "Space Saver"
     @State private var timeElapsed: TimeInterval = 0
     @State private var showSavedToast = false
     @State private var showFinalizeSheet = false

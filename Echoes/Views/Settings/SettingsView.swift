@@ -9,7 +9,7 @@ struct SettingsView: View {
     
     // Settings State
     @AppStorage("enableCountdown") private var enableCountdown = true
-    @AppStorage("recordingQuality") private var recordingQuality = "High Fidelity"
+    @AppStorage("recordingQuality") private var recordingQuality = "Space Saver"
     @AppStorage("privacyMode") private var privacyMode = false
     
     // Alert State

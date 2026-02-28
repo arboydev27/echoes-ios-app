@@ -27,7 +27,7 @@ final class AudioRecorderManager: NSObject, AVAudioRecorderDelegate {
         }
     }
     
-    func startRecording(quality: String = "High Fidelity") {
+    func startRecording(quality: String = "Space Saver") {
         let tempDir = FileManager.default.temporaryDirectory
         let filename = "temp_recording_\(UUID().uuidString).m4a"
         let fileURL = tempDir.appendingPathComponent(filename)
