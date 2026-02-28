@@ -14,6 +14,7 @@ struct SettingsView: View {
     
     // Alert State
     @State private var showResetAlert = false
+    @State private var showTutorial = false
     
     var body: some View {
         NavigationStack {
@@ -96,12 +97,17 @@ struct SettingsView: View {
                         
                         // Support & About Section
                         SettingsSection(title: "Support & About") {
-                            NavigationLink(destination: FieldGuideView()) {
+                            Button(action: { showTutorial = true }) {
                                 HStack {
                                     SettingsRowLabel(icon: "questionmark.circle", title: "Help & Tutorials", subtitle: "Learn how to use Echoes.")
                                     Spacer()
                                     Image(systemName: "chevron.right")
                                         .foregroundColor(.neoCharcoal.opacity(0.3))
+                                }
+                            }
+                            .fullScreenCover(isPresented: $showTutorial) {
+                                OnboardingView(isTutorial: true) { _ in
+                                    showTutorial = false
                                 }
                             }
                             

@@ -3,31 +3,57 @@ import SwiftUI
 struct MainTabView: View {
     @State private var selectedTab = 1
     @State private var showCapture = false
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @State private var showOnboarding: Bool
     
     init() {
         UITabBar.appearance().isHidden = true
+        // Initialize state without waiting for onAppear
+        _showOnboarding = State(initialValue: !UserDefaults.standard.bool(forKey: "hasCompletedOnboarding"))
     }
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            TabView(selection: $selectedTab) {
-                Group {
-                    LibraryView()
-                        .tag(0)
+        ZStack {
+            if showOnboarding {
+                OnboardingView { shouldStartCapture in
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        hasCompletedOnboarding = true
+                        showOnboarding = false
+                    }
                     
-                    KindleView()
-                        .tag(1)
-                    
-                    Color.clear
-                        .tag(2)
-                    
-                    OrbitView()
-                        .tag(3)
+                    if shouldStartCapture {
+                        // Auto-open capture for the "First Guided Recording" experience
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                            showCapture = true
+                        }
+                    }
                 }
-                .toolbar(.hidden, for: .tabBar)
+                .transition(.opacity)
+                .zIndex(2)
+            } else {
+                ZStack(alignment: .bottom) {
+                    TabView(selection: $selectedTab) {
+                        Group {
+                            LibraryView()
+                                .tag(0)
+                            
+                            KindleView()
+                                .tag(1)
+                            
+                            Color.clear
+                                .tag(2)
+                            
+                            OrbitView()
+                                .tag(3)
+                        }
+                        .toolbar(.hidden, for: .tabBar)
+                    }
+                    
+                    CustomTabBar(selectedTab: $selectedTab, showCapture: $showCapture)
+                }
+                .transition(.opacity)
+                .zIndex(1)
             }
-            
-            CustomTabBar(selectedTab: $selectedTab, showCapture: $showCapture)
         }
         .fullScreenCover(isPresented: $showCapture) {
             CaptureView(startImmediately: false)
