@@ -90,7 +90,7 @@ Echoes follows a **MVVM + Service-Oriented Architecture**. The application is or
 
 **Views** are declarative SwiftUI components that observe services or local `@Observable` view models. Views contain no business logic; they invoke service methods and display observed state.
 
-For a detailed technical breakdown of every service, data model, and the complete recording pipeline, see the [Architecture Guide](ideas/plans/Echoes_Architecture_Guide.md).
+For a detailed technical breakdown of every service, data model, and the complete recording pipeline, see the [Architecture Guide](Echoes_Architecture_Guide.md).
 
 ---
 
@@ -244,4 +244,4 @@ Each `ThemeCategory` case is assigned a distinct pastel color used consistently 
 
 ## Further Reading
 
-For a deep technical reference, including full service API descriptions, the complete recording lifecycle diagram, the onboarding state machine, and a list of known technical debt, see the [Architecture Guide](ideas/plans/Echoes_Architecture_Guide.md).
+For a deep technical reference, including full service API descriptions, the complete recording lifecycle diagram, the onboarding state machine, and a list of known technical debt, see the [Architecture Guide](Echoes_Architecture_Guide.md).
