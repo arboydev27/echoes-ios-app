@@ -7,13 +7,14 @@ struct TranscriptView: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 24) {
                 if transcript.isEmpty {
-                    Text("No transcript available for this echo.")
+                    Text("No memory snippet available for this echo.")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.neoCharcoal.opacity(0.5))
                         .italic()
                         .padding(.top, 40)
                 } else {
-                    let segments = parseTranscript(transcript)
+                    let snippet = createSnippet(from: transcript)
+                    let segments = parseTranscript(snippet)
                     ForEach(0..<segments.count, id: \.self) { index in
                         let segment = segments[index]
                         TranscriptBubble(speaker: segment.speaker, text: segment.text)
@@ -40,6 +41,14 @@ struct TranscriptView: View {
     private struct TranscriptSegment {
         let speaker: String
         let text: String
+    }
+    
+    private func createSnippet(from text: String) -> String {
+        let sentences = text.components(separatedBy: ". ")
+        if sentences.count > 2 {
+            return sentences.prefix(2).joined(separator: ". ") + "..."
+        }
+        return text
     }
     
     private func parseTranscript(_ text: String) -> [TranscriptSegment] {

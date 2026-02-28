@@ -161,9 +161,23 @@ struct ConnectionPlaybackView: View {
             Divider()
                 .background(Color.neoCharcoal.opacity(0.2))
             
-            // Transcript View extending to bottom with mask
-            TranscriptView(transcript: echo.transcript)
-                .background(Color.neoBackground)
+            // Memory Snippet View extending to bottom with mask
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "quote.opening")
+                        .foregroundColor(.neoPrimary)
+                        .font(.system(size: 14, weight: .bold))
+                    Text("MEMORY SNIPPET")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.neoCharcoal.opacity(0.7))
+                        .tracking(1)
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
+                
+                TranscriptView(transcript: echo.transcript)
+            }
+            .background(Color.neoBackground)
         }
         .background(Color.neoBackground.ignoresSafeArea())
         .navigationBarHidden(true)
