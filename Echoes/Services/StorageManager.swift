@@ -5,6 +5,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 enum StorageError: Error {
     case documentDirectoryNotFound
@@ -83,7 +84,7 @@ final class StorageManager {
         let destinationURL = documentDir.appendingPathComponent(filename)
         
         do {
-            try data.write(to: destinationURL, options: .atomic)
+            try data.write(to: destinationURL, options: Data.WritingOptions.atomic)
             return filename
         } catch {
             print("Failed to save cover image: \(error)")
@@ -125,7 +126,7 @@ final class StorageManager {
         let destinationURL = documentDir.appendingPathComponent(filename)
         
         do {
-            try data.write(to: destinationURL, options: .atomic)
+            try data.write(to: destinationURL, options: Data.WritingOptions.atomic)
             return filename
         } catch {
             print("Failed to save avatar image: \(error)")
@@ -168,7 +169,7 @@ final class StorageManager {
             if FileManager.default.fileExists(atPath: destinationURL.path) {
                 return filename // Already seeded
             }
-            try data.write(to: destinationURL, options: .atomic)
+            try data.write(to: destinationURL, options: Data.WritingOptions.atomic)
             return filename
         } catch {
             print("Failed to seed avatar from asset: \(error)")

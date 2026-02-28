@@ -17,7 +17,7 @@ struct OrbitMapView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("Orbit")
+                Text("People Recorded")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundColor(.neoCharcoal.opacity(0.6))
                     .textCase(.uppercase)
